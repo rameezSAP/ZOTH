@@ -1,0 +1,82 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Equipment Detail',
+    typeNamePlural: 'Equipments Detail',
+    title.value: 'MeasurePoint'
+}
+@UI.presentationVariant:[{sortOrder:[{by:'MPPosition',direction:#ASC}]}]
+annotate view ZC_PM_PRIDE_ROUTE_MP_M with
+{
+
+  @UI.facet: [{ id: 'route',position: 10,label: 'Routes',type: #IDENTIFICATION_REFERENCE  },
+   { id: 'EquipmentDetails',position: 30,label: 'MP Readings',type: #LINEITEM_REFERENCE ,targetElement: '_readingMP'}]
+
+  //RouteId;
+  //FuncLoc;
+  //  @UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //  Equipment;
+  @UI: { lineItem: [{position: 20, importance: #HIGH }], identification: [{position: 20 }] }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  MeasurePoint;
+  @UI: { lineItem: [{position: 25, importance: #HIGH }] }
+  //    @UI.textArrangement: #TEXT_ONLY
+  MPDesc;
+  //@UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //LastChangeAt;
+  @UI: { lineItem: [{position: 30, importance: #HIGH }], identification: [{position: 30 }] }
+  @UI.textArrangement: #TEXT_ONLY
+@UI.connectedFields: [{type: #AS_CONTACT}]
+  @Consumption.valueHelpDefinition: [{entity:{ name: 'ZICDS_GET_CODEGRP_VH',element: 'Code' } ,additionalBinding: [{localElement: 'CodeGroup',element: 'Codegruppe', usage :#FILTER_AND_RESULT }] }]
+//  ,additionalBinding: [{localElement: 'CodeGroup',element: 'Codegruppe', usage :#FILTER }] }]
+//  @Consumption.valueHelpDefinition: [{ enabled: 'value_char' ,qualifier: 'valueHelp'  }]
+//  @Consumption.valueHelp : {  }
+  value_char;
+  @UI: { lineItem: [{position: 35 }] }
+  CalcReading;
+  //Value;
+  @UI: { lineItem: [{position: 40, importance: #HIGH }], identification: [{position: 40 }] }
+  Uom;
+  //@UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //CDate;
+  //@UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //CTime;
+  //@UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //CreatedBy;
+  /* Associations */
+  //_details;
+  @UI: { lineItem: [{position: 70 ,label: 'Status',criticality: 'critical'},
+   { type: #FOR_ACTION ,dataAction: 'OutOfOrder' ,label: 'Out of Order', criticality: 'neg' },
+   { type: #FOR_ACTION ,dataAction: 'InOrder', label: 'In Order', criticality: 'pos' }]
+    ,
+    identification: [{position: 70 },
+    { type: #FOR_ACTION ,dataAction: 'OutOfOrder', label: 'Out of Order', criticality: 'neg' },
+    { type: #FOR_ACTION ,dataAction: 'InOrder', label: 'In Order', criticality: 'pos' }]}
+  @UI.textArrangement: #TEXT_ONLY
+  //@UI: { lineItem: [{position: 60 ,label: 'Status' ,criticality: 'critical'}]}
+  IsActive;
+  @UI: { lineItem: [{position: 50 }], identification: [{position: 50 }] }
+  LowLimit;
+  @UI: { lineItem: [{position: 60 }], identification: [{position: 60 }] }
+  HighLimit;
+  @UI.hidden: true
+  critical;
+  @UI.hidden: true
+  neg;
+  @UI.hidden: true
+  pos;
+  @UI: { lineItem: [{position: 90 }], identification: [{position: 90 }] }
+  formula_main;
+    @UI.hidden: true
+  CodeGroup;
+  @UI: { lineItem: [{position: 100 }] }
+  MPPosition;
+  
+  @UI: { identification: [{position: 55 }] }
+formulaMP;
+  @UI.hidden: true
+  MPPositionChar;
+
+
+}

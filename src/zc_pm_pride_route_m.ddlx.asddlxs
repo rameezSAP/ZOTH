@@ -1,0 +1,152 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Route',
+    typeNamePlural: 'Routes',
+    title.value:  'RouteId'  , title.type: #STANDARD
+}
+annotate view ZC_PM_PRIDE_ROUTE_M with
+{
+  @UI.facet: [{
+                  id: 'RouteHeaderInfo',
+                  purpose: #HEADER,
+                  type: #DATAPOINT_REFERENCE,
+                  position: 10,
+                  targetQualifier: 'PendingCount'
+              },
+              {
+                  id: 'route',
+                  position: 20,
+                  label: 'Routes',
+                  type: #IDENTIFICATION_REFERENCE
+              },
+              {
+                  id: 'routeDetails',
+                  position: 30,
+                  label: 'Routes Details',
+                  type: #LINEITEM_REFERENCE ,
+                  targetElement: '_details'
+              }
+  //              ,
+              // Body Facets (Object Page)
+
+       // Facet for chart - charts can only be displayed in facets
+  //
+  //             { id:              'Chart1-ID', // Facet for our Chart with type "#CHART_REFERENCE"
+  //               purpose:         #STANDARD,
+  //               type:            #CHART_REFERENCE,
+  //               label:           'Chart facet',
+  //               targetQualifier: 'Chart1',
+  //               targetElement:   '_details', // Specifies where the data is retrieved from
+  //               position:        1
+  //             }
+             ]
+
+  @UI: {
+  //            selectionField: [{position: 10 }],
+            lineItem: [{position: 10, importance: #HIGH }],
+            identification: [{position: 10 }]
+          }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  @EndUserText.label: 'Route Name'
+  RouteName;
+  //   RouteId;
+  @UI: {
+  //selectionField: [{position: 20 }],
+          lineItem: [{position: 20 }],
+          identification: [{position: 20 }]
+          }
+  @Search.fuzzinessThreshold: 0.8
+  @Search.defaultSearchElement: true
+  @EndUserText.label: 'Route ID'
+  RouteId;
+  //   RouteId;
+  @UI: {  selectionField: [{position: 10 }],
+          lineItem: [{position: 9 },{type: #FOR_ACTION ,dataAction: 'CompleteRoute', label: 'Complete' }],
+          identification: [{position: 9 },{type: #FOR_ACTION ,dataAction: 'CompleteRoute', label: 'Complete' }]
+          }
+  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'zi_pm_loc_txt_r',
+        element: 'Location'
+    }
+  }]
+
+  Location;
+
+  @UI: {  selectionField: [{position: 11 }],
+         lineItem: [{position: 11 }],
+         identification: [{position: 11 }]
+         }
+  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'ZI_PM_PLANT_TXT_R',
+        element: 'Plant'
+    }, additionalBinding: [{localElement: 'Location' ,element: 'Location' }]
+  }]
+
+  Plant;
+
+  @UI: {selectionField: [{position: 21 }],
+       //   lineItem: [{position: 31,importance: #HIGH }],
+           identification: [{position: 31 , label: 'Actual Hours' }]
+          }
+
+  //  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+  entity: {
+      name: 'ZI_PM_DATE_TXT_R',
+      element: 'EvenDate'
+  }
+  }]
+  ETimeEven;
+
+  @UI: {
+        lineItem: [{position: 32,importance: #HIGH
+        }],
+         identification: [{position: 32  }]}
+
+  //  @Search.defaultSearchElement: true
+  ETime;
+  //  EDate;
+
+  //   EDate;
+  @UI.lineItem: [{position: 40 }]
+  @UI.identification: [{position: 40 }]
+  EDate;
+  //  ETime;
+
+  //   @UI: {
+  //           identification: [{position: 50 }]
+  //          }
+
+  //  @Search.defaultSearchElement: true
+  //  SDate;
+  //
+  //  //   EDate;
+  //  // @UI.lineItem: [{position: 40 }]
+  //  @UI.identification: [{position: 60, importance: #HIGH }]
+  //  STime;
+  //   EDate;
+  @UI.lineItem: [{position: 50 ,criticality: 'critical', importance: #HIGH}]
+  @UI.identification: [{position: 60,criticality: 'critical'}]
+  @UI.dataPoint: { qualifier: 'PendingCount', title: 'Pending Count', criticality: 'critical' }
+  PendingCount;
+  //   ETime;
+  @UI.lineItem: [{position: 80 }]
+  @UI.identification: [{position: 50
+  }]
+  Sechedule;
+  @UI.lineItem: [{position: 90 }]
+  @UI.textArrangement: #TEXT_ONLY
+  Active;
+  @UI.hidden: true
+  critical;
+
+  @UI.hidden: true
+  RouteRefID;
+
+}

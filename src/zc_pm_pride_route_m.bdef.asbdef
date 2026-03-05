@@ -1,0 +1,37 @@
+projection;
+strict;
+
+define behavior for ZC_PM_PRIDE_ROUTE_M //alias <alias_name>
+use etag
+{
+//  use create;
+  use update;
+  //  use delete;
+  use action CompleteRoute;
+
+  use association _details { create; }
+}
+
+define behavior for Zc_PM_PRIDE_ROUTE_DET_M //alias <alias_name>
+use etag
+{
+  use update;
+  //  use delete;
+  use action NotRunning;
+  use action Running;
+  use association _routes;
+  use association _detailsMP { create; }
+
+}
+
+define behavior for ZC_PM_PRIDE_ROUTE_MP_M //alias <alias_name>
+use etag
+{
+  use update;
+  //  use delete;
+  use action InOrder;
+  use action OutOfOrder;
+  use association _routes;
+  use association _details; // {create ;}
+
+}

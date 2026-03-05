@@ -1,0 +1,136 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Route Detail',
+    typeNamePlural: 'Route Details',
+    title.value: 'RouteId'
+}
+annotate view ZC_PM_PRIDE_ROUTE_DET_TEMP_M with
+{
+  @UI.facet: [{ id: 'routeDetails',position: 10,label: 'Routes Details',type: #IDENTIFICATION_REFERENCE  },
+   { id: 'EquipmentDetails',position: 20,label: 'Equipment Details',type: #LINEITEM_REFERENCE ,targetElement: '_detailsMP' }]
+
+  // @UI: { lineItem: [{position: 40 }]
+  //,
+  //identification: [{position: 40 }]
+  // }
+  @Search.defaultSearchElement: true
+  @EndUserText.label: 'Route ID'
+  RouteId;
+  //    RouteId;
+  //    CDate;
+  //    CTime;
+  @UI: { lineItem: [{position: 20 ,invocationGrouping: #CHANGE_SET}], identification: [{position: 20 }] }
+  @Search.defaultSearchElement: true
+
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+  //  name: 'zi_pm_funcloc_txt_r',
+  //  element: 'Tplnr'
+  //          name: 'zi_pm_equipment_txt_r',
+  //          element: 'Equnr'
+                    name: 'ZICDS_PM_FUNCLOCATION_VH_2',
+          element: 'TechObject'} }]
+
+  @Search.fuzzinessThreshold: 0.8
+  Equipment;
+  @UI: {
+  lineItem: [{position: 30 }  ]
+  ,
+  //
+   identification: [{position: 50 },{ type: #FOR_ACTION ,dataAction: 'updateMP', label: 'Update' }] }
+  //,
+  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }],
+  //         identification: [{position: 30 },
+  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }] }
+  @EndUserText.label: 'Functional Location'
+  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+  //      entity: {
+  //          name: 'zi_pm_equipment_txt_r',
+  //          element: 'Equnr'} }]
+
+                entity: {
+  //          name: 'zi_pm_funcloc_txt_r',
+          name: 'ZICDS_PM_FUNCLOCATION_VH',
+          element: 'TechObject'} }]
+  @Search.fuzzinessThreshold: 0.8
+  EquiText;
+  @UI: {
+  lineItem: [{position: 40 }  ]
+  }
+  //
+  //   identification: [{position: 50 },{ type: #FOR_ACTION ,dataAction: 'updateMP', label: 'Update' }] }
+  //,
+  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }],
+  //         identification: [{position: 30 },
+  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }] }
+  @EndUserText.label: 'Pride Description'
+    @Search.defaultSearchElement: true
+  //  @Consumption.valueHelpDefinition: [{
+  //  //      entity: {
+  //  //          name: 'zi_pm_equipment_txt_r',
+  //  //          element: 'Equnr'} }]
+  //
+  //                entity: {
+  //  //          name: 'zi_pm_funcloc_txt_r',
+  //          name: 'ZICDS_PM_FUNCLOCATION_VH',
+  //          element: 'TechObject'} }]
+  @Search.fuzzinessThreshold: 0.8
+  
+  FLText;
+//  @UI: {
+//  lineItem: [{position: 40 }  ]
+//  }
+//  //
+//  //   identification: [{position: 50 },{ type: #FOR_ACTION ,dataAction: 'updateMP', label: 'Update' }] }
+//  //,
+//  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }],
+//  //         identification: [{position: 30 },
+//  //            { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }] }
+//  @EndUserText.label: 'Pride Description'
+//  @Search.defaultSearchElement: true
+//  //  @Consumption.valueHelpDefinition: [{
+//  //  //      entity: {
+//  //  //          name: 'zi_pm_equipment_txt_r',
+//  //  //          element: 'Equnr'} }]
+//  //
+//  //                entity: {
+//  //  //          name: 'zi_pm_funcloc_txt_r',
+//  //          name: 'ZICDS_PM_FUNCLOCATION_VH',
+//  //          element: 'TechObject'} }]
+//  @Search.fuzzinessThreshold: 0.8
+//
+//  FuncLoc;
+
+  @UI: { 
+  lineItem: [{position: 60 ,label: 'Status',criticality: 'critical'}, { type: #FOR_ACTION ,dataAction: 'ActiveEQ', label: 'Activate' }, { type: #FOR_ACTION ,dataAction: 'InactiveEQ', label: 'InActive' }]
+  //   ,
+  //   identification: [{position: 60 },{ type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }]
+
+  }
+  @UI.textArrangement: #TEXT_ONLY
+  IsActive;
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+  //  name: 'zi_pm_funcloc_txt_r',
+  //  element: 'Tplnr'
+          name: 'ZI_PRIDE_FOR_TYP_VALTXT',
+          element: 'Status'
+
+    }}]
+  @UI: {
+  lineItem: [{position: 70 }  ]}
+  formula_typ;
+  @UI.hidden: true
+  critical;
+  @UI: { lineItem: [{position: 90,label: 'Frequency' }], identification: [{position: 90,label: 'Schedule Frequency' }] }
+  @Consumption.valueHelpDefinition: [{
+  entity: {
+  name: 'ZI_PM_FREQ_TXT_R',
+  element: 'Frequency'
+  }
+  }]
+  frequency;
+
+}

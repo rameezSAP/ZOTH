@@ -1,0 +1,62 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'MP Detail',
+    typeNamePlural: 'MP Details',
+    title.value: 'Equipment'
+}
+annotate view ZC_PM_PRIDE_ROUTE_MP_TEMP_M with
+{
+  @UI.facet: [{ id: 'route',position: 10,label: 'Routes',type: #IDENTIFICATION_REFERENCE  }]
+
+  //RouteId;
+  //FuncLoc;
+  //  @UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //  Equipment;
+  @UI: { lineItem: [{position: 10 }],//,{ type: #FOR_ACTION ,dataAction: 'ActiveMP', label: 'Active' }],
+   identification: [{position: 10 }]} //,{ type: #FOR_ACTION ,dataAction: 'ActiveMP', label: 'Active' }] }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  MeasurePoint;
+  //@UI: { lineItem: [{position: 10 }], identification: [{position: 10 }] }
+  //LastChangeAt;
+  //@UI: { lineItem: [{position: 30 }], identification: [{position: 30 }] }
+ // Value;
+  @UI: { lineItem: [{position: 30 }], identification: [{position: 30 }] }
+  @UI.multiLineText: true  // Critical for multi-line display
+  LongText;
+  
+  @UI: { lineItem: [{position: 40 }], identification: [{position: 40 }] }
+  Uom;
+  @UI: { lineItem: [{position: 70 ,label: 'Status',criticality: 'critical'}, 
+  { type: #FOR_ACTION ,dataAction: 'ActiveMP', label: 'Activate' }, 
+  { type: #FOR_ACTION ,dataAction: 'InactiveMP', label: 'InActive' },
+  { type: #FOR_ACTION ,dataAction: 'RequiredMP', label: 'Required' }
+  
+  ]
+  //   ,
+  //   identification: [{position: 60 },{ type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }]
+
+  }
+  @UI.textArrangement: #TEXT_ONLY
+  IsActive;
+    @UI: { lineItem: [{position: 50 }], identification: [{position: 50 }] }
+  LowLimit;
+  @UI: { lineItem: [{position: 60 }], identification: [{position: 60 }] }
+  HighLimit;   
+    @UI: { lineItem: [{position: 70 ,label: 'Formula'}] ,identification: [{position: 70 ,label: 'Formula'}] }
+  @UI.textArrangement: #TEXT_ONLY
+    @Consumption.valueHelpDefinition: [{
+      entity: { name: 'ZI_PRIDE_FOR_VALTXT', element: 'Status' }
+  }]
+  formula_typ;
+  
+  @UI.hidden: true
+  critical;
+      @UI: { lineItem: [{position: 90,label: 'Formula Name' }], identification: [{position: 90,label: 'Formula Name' }] }
+      @Consumption.valueHelpDefinition: [{
+      entity: { name: 'ZI_PRIDE_FOR_TYP_VALTXT', element: 'Status' }
+  }]
+  formula_main;
+
+}
