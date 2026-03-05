@@ -1,0 +1,147 @@
+*&---------------------------------------------------------------------*
+*& Include          ZXWOCU24
+*&---------------------------------------------------------------------*
+IF SY-TCODE = 'IW31' OR SY-TCODE = 'IW32' OR  SY-TCODE = 'IW21' OR SY-TCODE = 'IW22'.
+  DATA: WF_KEY    TYPE RSNUM,
+        AMOUNT    TYPE ZPR_LIMIT,
+        LV_AMOUNT TYPE ZPR_LIMIT,
+        AGENTS    TYPE ZTT_AGENTS,
+        USNAM     TYPE USNAM.
+  DATA: MESSAGE_TEXT(100),
+        PASS(1).
+  "MIV workflow User check
+  SELECT SINGLE * FROM ZPM_WF INTO @DATA(ZPM_WF) WHERE WF_ID = 'WF-9.1'.
+  IF ZPM_WF-ZACTIVE <> 'X'.
+    MESSAGE 'Workflow is not active' TYPE 'E'.
+  ENDIF.
+
+  DATA(LT_COMP) = COMP_TAB[].
+  DELETE LT_COMP WHERE XLOEK = 'X'.
+  DELETE LT_COMP WHERE SHKZG = 'S'.
+
+  READ TABLE LT_COMP INTO DATA(LS_COMP) INDEX 1.
+  SELECT * FROM ZMM_WF_HST_V INTO TABLE @DATA(LT_HST) WHERE WF_ID = 'WF-9.1' AND RSNUM = @LS_COMP-RSNUM AND LEVELS = 0.
+  LOOP AT LT_HST INTO DATA(LS_HST).
+    DELETE LT_COMP[] WHERE RSNUM = LS_HST-RSNUM AND RSPOS = LS_HST-RSPOS.
+    CLEAR LS_HST.
+  ENDLOOP.
+
+*WF_KEY = LS_COMP-RSNUM.
+
+  IF LT_COMP[] IS NOT INITIAL.
+    SELECT * FROM MBEW FOR ALL ENTRIES IN @LT_COMP
+      WHERE MATNR = @LT_COMP-MATNR
+      AND BWKEY = @LT_COMP-WERKS
+      AND BWTAR = ''
+* AND BWKEY = '1001' """"""""""""""""""""""""""""""""""""CHANGE (Confirm from MM).
+      INTO TABLE @DATA(LT_MBEW).
+
+    DATA: LV_CURR(1),
+          CON_CURRENCY TYPE RESB-WAERS.
+    LOOP AT LT_COMP INTO DATA(LS_RESB).
+      IF LS_RESB-WAERS NE 'USD'.
+        CON_CURRENCY = LS_RESB-WAERS.
+      ENDIF.
+      LOOP AT LT_MBEW INTO DATA(LS_MEBW)."VERPR
+        LV_AMOUNT = LV_AMOUNT + ( LS_MEBW-VERPR * LS_RESB-BDMNG ).
+      ENDLOOP.
+    ENDLOOP.
+
+    DATA: LV_CONVERT_DATE(8).
+    LV_CONVERT_DATE = '99999999' - SY-DATUM.
+    IF CON_CURRENCY NE 'USD' AND CON_CURRENCY IS NOT INITIAL.
+      SELECT SINGLE * FROM TCURR INTO @DATA(LS_TCURR)
+        WHERE KURST = 'M'
+        AND FCURR EQ @CON_CURRENCY
+        AND TCURR EQ 'USD'
+        AND GDATU = ( SELECT MIN( GDATU ) FROM TCURR WHERE KURST = 'M'
+        AND FCURR EQ @CON_CURRENCY
+        AND TCURR EQ 'USD'
+        AND GDATU LE @LV_CONVERT_DATE ).
+      IF SY-SUBRC EQ 0.
+        IF LS_TCURR-UKURS LT 0.
+          LV_AMOUNT = LV_AMOUNT / ( LS_TCURR-UKURS * -1 ).
+        ELSE.
+          LV_AMOUNT = LV_AMOUNT * LS_TCURR-UKURS .
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF LV_AMOUNT GT 5000.
+      CALL FUNCTION 'ZFM_MM_BUDGET_OWNER'
+        EXPORTING
+          AUFNR        = CAUFVD_IMP-AUFNR
+          PS_PSP_PNR   = CAUFVD_IMP-PSPEL
+          KOSTL        = CAUFVD_IMP-AKSTL
+          KOKRS        = CAUFVD_IMP-KOKRS
+        IMPORTING
+          MESSAGE_TEXT = MESSAGE_TEXT
+        TABLES
+          AGENTS       = AGENTS.
+      IF MESSAGE_TEXT IS NOT INITIAL.
+        MESSAGE MESSAGE_TEXT TYPE 'E'.
+        DATA(LV_USER_ERROR) = 'X'.
+      ENDIF.
+      CLEAR: AGENTS[].
+    ENDIF.
+    IF LV_USER_ERROR <> 'X'.
+      USNAM = SY-UNAME.
+      AMOUNT = LV_AMOUNT.
+      CALL FUNCTION 'ZFM_MM_DOFA'
+        EXPORTING
+          USNAM        = USNAM
+          AMOUNT       = AMOUNT
+          WF_ID        = 'WF-9.1'
+        IMPORTING
+          PASS         = PASS
+          MESSAGE_TEXT = MESSAGE_TEXT
+        TABLES
+          AGENTS       = AGENTS.
+      IF MESSAGE_TEXT IS NOT INITIAL.
+        MESSAGE MESSAGE_TEXT TYPE 'E'.
+      ENDIF.
+    ENDIF."IF LV_USER_ERROR <> 'X'.
+**          COMMIT WORK.
+
+  ENDIF.
+
+  "Order Workflow User Checks
+  SELECT SINGLE * FROM ZPM_WF_HST INTO @DATA(LS_HST2)
+    WHERE AUFNR = @CAUFVD_IMP-AUFNR.
+  IF SY-SUBRC <> 0.
+    IF CAUFVD_IMP-AUART EQ 'YBA4' OR CAUFVD_IMP-AUART EQ 'YBA9'.
+      DATA: LV_WF_ID TYPE ZPM_WF-WF_ID.
+      LV_WF_ID = SWITCH #( CAUFVD_IMP-AUART WHEN 'YBA4' THEN |WF-6.1|
+                                            WHEN 'YBA9' THEN |WF-6.2| ).
+*    IMPORT SYSTEM_STATUS_LINE TO SYSTEM_STATUS_LINE FROM MEMORY ID 'SYSTEM_STATUS_LINE_ORD'.
+*    IF SYSTEM_STATUS_LINE = 'REL'.
+      SELECT SINGLE ZACTIVE FROM ZPM_WF INTO @DATA(LV_STATUS)
+        WHERE WF_ID EQ @LV_WF_ID.
+      IF LV_STATUS <> 'X'.
+        MESSAGE |Work Flow ID { LV_WF_ID } is inactive|  TYPE 'W'.
+      ELSE.
+*    ENDIF. "IF SYSTEM_STATUS_LINE = 'REL'.
+
+        DATA LV_RTYPE   TYPE SY-MSGTY.
+        DATA LV_MESSAGE TYPE CHAR255.
+        IF CAUFVD_IMP-TPLNR IS INITIAL. "Function Location
+          MESSAGE 'Fill the function location for workflow approval' TYPE 'E'.
+        ELSE.
+          CALL FUNCTION 'ZPM_FM_CHECK_WF_SETTING_ORDER'
+            EXPORTING
+              WF_ID   = LV_WF_ID
+              CAUFVD  = CAUFVD_IMP
+            IMPORTING
+              RTYPE   = LV_RTYPE
+              MESSAGE = LV_MESSAGE.
+          IF LV_RTYPE = 'E'.
+            MESSAGE |{ LV_MESSAGE }| TYPE 'E'.
+          ENDIF.
+        ENDIF."TPLNR check - Function Location
+      ENDIF.
+
+    ENDIF.
+  ENDIF.
+
+
+ENDIF.

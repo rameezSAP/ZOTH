@@ -1,0 +1,6 @@
+@EndUserText.label: 'Pride: Route Temp Service Definition'
+define service ZUI2_PM_PRIDE_ROUTE__TEMP_M {
+  expose ZC_PM_PRIDE_ROUTE__TEMP_M;
+  expose ZC_PM_PRIDE_ROUTE_DET_TEMP_M;
+  expose ZC_PM_PRIDE_ROUTE_MP_TEMP_M;
+}
