@@ -1,0 +1,37 @@
+projection;
+strict;
+
+define behavior for ZC_PM_PRIDE_ROUTE__TEMP_M //alias <alias_name>
+{
+  use create;
+  use update;
+  //use delete;
+  use action SendRoute;
+  use action StopRoute;
+  use association _details { create; }
+}
+
+define behavior for ZC_PM_PRIDE_ROUTE_DET_TEMP_M //alias <alias_name>
+{
+  use update;
+//  use delete;
+  use action updateMP;
+  use action ActiveEQ;
+  use action InactiveEQ;
+  use association _routes;
+  use association _detailsMP { create; }
+}
+
+define behavior for ZC_PM_PRIDE_ROUTE_MP_TEMP_M //alias <alias_name>
+{
+ use update;
+  use delete;
+  use action ActiveMP;
+  use action InactiveMP;
+  use action RequiredMP;
+
+//  use action updateMP;
+
+  use association _routes;
+  use association _details;
+}

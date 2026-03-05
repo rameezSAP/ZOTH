@@ -1,0 +1,109 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Route Detail',
+    typeNamePlural: 'Route Details',
+    title.value: 'RouteId'
+}
+annotate view ZC_PM_PRIDE_ROUTE__TEMP_M with
+{
+  @UI.facet: [{ id: 'route',position: 10,label: 'Routes',type: #IDENTIFICATION_REFERENCE  },
+   { id: 'routeDetails',position: 20,label: 'Routes Details',type: #LINEITEM_REFERENCE ,targetElement: '_details'}]
+  @UI: {selectionField: [{position: 10 }],
+          lineItem: [{position: 10 }],
+           identification: [{position: 10 }]
+          }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  @EndUserText.label: 'Route Name'
+
+  RouteName;
+  //   RouteId;
+  @UI: {
+  //selectionField: [{position: 20 }],
+          lineItem: [{position: 20 }
+  //          , { type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }
+          ]
+  //          ,
+  //          identification: [{position: 20 }]
+           }
+  @Search.fuzzinessThreshold: 0.8
+  @Search.defaultSearchElement: true
+  @EndUserText.label: 'Route ID'
+  RouteId;
+  //   RouteId;
+  @UI: {
+          lineItem: [{position: 9 }],
+          identification: [{position: 9 }]
+          }
+  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'zi_pm_loc_txt_r',
+        element: 'Location'
+    }
+  }]
+
+  Location;
+    @UI: {  selectionField: [{position: 11 }],
+          lineItem: [{position: 11 }],
+          identification: [{position: 11 }]
+          }
+  @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'ZI_PM_PLANT_TXT_R',
+        element: 'Plant'
+    }, additionalBinding: [{localElement: 'Location' ,element: 'Location' }]
+  }]
+  Plant;   
+  @UI: {selectionField: [{position: 30 }],
+          lineItem: [{position: 30 }],
+           identification: [{position: 30 }]
+          }
+
+  @Search.defaultSearchElement: true
+  SDate;
+
+  //   EDate;
+  @UI.lineItem: [{position: 40 }]
+  @UI.identification: [{position: 40 }]
+ @Consumption.valueHelpDefinition: [{
+  entity: {
+      name: 'ZI_PM_DATE_TXT_R',
+      element: 'EvenDate'
+  }
+}]
+  ETimeEven;
+
+//  STime;
+  //  //   ETime;
+  //  @UI.lineItem: [{position: 50 }]
+  //  @UI.identification: [{position: 50 }]
+  //  sechedule;
+  @UI.lineItem:
+  [{position: 60 ,criticality: 'critical' },
+  { type: #FOR_ACTION ,dataAction: 'StopRoute', label: 'Stop Route', criticality: 'neg' },
+  { type: #FOR_ACTION ,dataAction: 'SendRoute', label: 'Start Route', criticality: 'pos' }]
+  @UI.textArrangement: #TEXT_ONLY
+
+  Active;
+
+  //   EDate;
+  @UI.lineItem: [{position: 70 }]
+  @UI.identification: [{position: 70 }]  
+   @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'zi_pm_sch_txt_r',
+        element: 'schedul'
+    }
+  }]
+  RouteSchedule;
+  @UI.hidden: true
+  neg;
+  @UI.hidden: true
+  pos;
+  @UI.hidden: true
+  critical;
+
+}

@@ -1,0 +1,33 @@
+projection;
+strict;
+
+define behavior for ZC_PM_PRIDE_ROUTE_ADMIN_M //alias <alias_name>
+{
+//  use create;
+//  use update;
+
+  use action ReOpenRoute;
+  use association _details { create; }
+}
+
+define behavior for ZC_PM_PRIDE_ROUTE_ADMIN_DET_M //alias <alias_name>
+{
+//  use update;
+
+//  use action NotRunning;
+//  use action Running;
+
+  use association _routes;
+  use association _detailsMP { create; }
+}
+
+define behavior for ZC_PM_PRIDE_ROUTE_ADMIN_MP_M //alias <alias_name>
+{
+//  use update;
+
+//  use action OutOfOrder;
+//  use action InOrder;
+
+  use association _routes;
+  use association _details;
+}
