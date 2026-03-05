@@ -1,0 +1,38 @@
+*****           Implementation of object type ZPM_ORD_WF           *****
+INCLUDE <OBJECT>.
+BEGIN_DATA OBJECT. " Do not change.. DATA is generated
+* only private members may be inserted into structure private
+DATA:
+" begin of private,
+"   to declare private attributes remove comments and
+"   insert private attributes here ...
+" end of private,
+  BEGIN OF KEY,
+      WF_TYPE LIKE ZPM_WF_ORD-WF_TYPE,
+      COUNTALL LIKE ZPM_WF_ORD-LEVELS,
+  END OF KEY.
+END_DATA OBJECT. " Do not change.. DATA is generated
+
+BEGIN_METHOD APPROVE CHANGING CONTAINER.
+BREAK-POINT.
+*SWC_GET_ELEMENT CONTAINER 'AUFNR' OBJECT-KEY-ORDER.
+SWC_GET_ELEMENT CONTAINER 'COUNTALL' OBJECT-KEY-COUNTALL.
+
+BREAK-POINT.
+
+
+END_METHOD.
+
+BEGIN_METHOD REJECT CHANGING CONTAINER.
+END_METHOD.
+
+BEGIN_METHOD STATUS_UPDATE CHANGING CONTAINER.
+
+BREAK-POINT.
+
+*SWC_GET_ELEMENT CONTAINER 'AUFNR' OBJECT-KEY-ORDER.
+*SWC_GET_ELEMENT CONTAINER 'COUNTALL' OBJECT-KEY-COUNTALL.
+*SWC_GET_ELEMENT CONTAINER 'COUNTER' OBJECT-KEY-COUNTER.
+
+
+END_METHOD.
