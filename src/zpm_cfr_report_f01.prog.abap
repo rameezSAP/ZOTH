@@ -1,0 +1,492 @@
+*&---------------------------------------------------------------------*
+*& Include          ZPM_CFR_REPORT_F01
+*&---------------------------------------------------------------------*
+FORM GET_DATA.
+
+*to get Header data
+  BREAK AC_ADNAN.
+  SELECT
+        VF~AUFNR,
+        VF~PRIOK,
+        VF~ARTPR,
+        VF~ANLZU,
+        VF~QMNUM,
+        VF~GSTRP,
+        VF~GLTRP,
+        VF~RSNUM,
+        VF~ZLIFNR,
+        VN~NAME1,
+        VQ~QMTXT,
+        VQ~INGRP,
+        VQ~IWERK,
+        VQ~ILART,
+        VQ~OBJNR,
+        VQ~ERNAM,
+        VQ~QMNAM,
+        VQ~STRMN,
+        VQ~LTRMN,
+        VQ~LACD_DATE,
+        VQ~EBELN,
+        VQ~MATNR,
+        ET~POST1,
+        PT~PRIOKX,
+        ST~ILATX,
+        WT~INNAM,
+        VN~NAME1 && VN~NAMe2 as vendor_name
+     INTO TABLE @DATA(LT_Data)
+     FROM VIAUFKST AS VF
+     LEFT OUTER JOIN LFA1 AS VN
+     ON VF~ZLIFNR = VN~LIFNR
+      LEFT OUTER JOIN VIQMEL AS VQ
+     ON VQ~QMNUM = VF~QMNUM
+     LEFT OUTER JOIN PRPS AS ET "loc wbs element Text
+     ON ET~PSPNR = VF~PSPEL
+     LEFT OUTER JOIN T356_T AS PT "PRIORITIES Text
+     ON PT~ARTPR  = VF~ARTPR AND PT~PRIOK = VF~PRIOK  AND PT~SPRAS EQ @SY-LANGU
+     LEFT OUTER JOIN T353I_T AS ST "service Text
+     ON ST~ILART = VQ~ILART AND ST~SPRAS = @SY-LANGU
+     LEFT OUTER JOIN T024I AS WT "Work type Text
+     ON WT~IWERK = VQ~IWERK AND WT~INGRP = VQ~INGRP
+     WHERE VF~AUFNR IN @S_AUFNR.
+
+  IF LT_DATA IS NOT INITIAL.
+    SELECT  RESB~RSNUM AS RSNUM,
+            RESB~MATNR AS MATNR,
+            RESB~WERKS AS WERKS,
+            ENMNG  AS ISSUED_QTY
+    FROM RESB
+        INTO TABLE @DATA(LT_RESB)
+      FOR ALL ENTRIES IN @LT_DATA
+    WHERE RESB~RSNUM = @LT_DATA-RSNUM
+        AND BWART = '261'.
+  ENDIF.
+
+  IF LT_DATA IS NOT INITIAL.
+*    For Remakrs AND SINGNATURE *Reciving Fac
+    BREAK ac_Adnan.
+    SELECT * FROM JCDS
+    INTO TABLE @DATA(LT_JCDS)
+          FOR ALL ENTRIES IN @LT_DATA
+          WHERE OBJNR = @LT_DATA-OBJNR
+          AND STAT LIKE 'E%'
+          AND INACT <> 'X'.
+
+    SORT LT_JCDS BY UDATE UTIME STAT DESCENDING.
+    DELETE ADJACENT DUPLICATES FROM LT_JCDS COMPARING OBJNR UDATE STAT.
+
+    SELECT * FROM JSTO
+         INTO TABLE @DATA(LT_JSTO)
+         FOR ALL ENTRIES IN @LT_DATA
+         WHERE OBJNR = @LT_DATA-OBJNR .
+    SORT LT_JSTO  BY OBJNR  ASCENDING.
+
+    SELECT * FROM TJ30T
+      INTO TABLE @DATA(LT_TJ30T)
+      FOR ALL ENTRIES IN @LT_JSTO
+      WHERE STSMA = @LT_JSTO-STSMA
+     AND SPRAS = @SY-LANGU.
+
+    SORT LT_TJ30T  BY ESTAT  ASCENDING.
+  ENDIF.
+
+  SELECT * FROM USER_ADDR
+    INTO TABLE @DATA(LT_USER_ADDR).
+
+  SORT LT_USER_ADDR BY BNAME ASCENDING.
+
+
+*for release order and code
+  SELECT * FROM ZPM_ORD_TO_PO
+      INTO TABLE @DATA(LT_PM_ORD_TO_PO)
+      FOR ALL ENTRIES IN @LT_DATA
+      WHERE AUFNR = @LT_DATA-AUFNR.
+
+
+*For Remakrs and singnature *Reciving Fac
+*    BREAK ac_Adnan.
+*    SELECT * FROM JCDS
+*    INTO TABLE @DATA(LT_JCDS)
+*          FOR ALL ENTRIES IN @LT_VIQMEL
+*          WHERE OBJNR = @LT_VIQMEL-OBJNR
+*          AND STAT LIKE 'E%'
+*          AND INACT <> 'X'.
+
+**to get material number data
+*   SELECT
+*     Sum( lv~ENMNG )
+*      FROM RESB as lv
+*   INTO TABLE @DATA(LT_RESB)
+*    FOR ALL ENTRIES IN @LT_Data
+*    WHERE RSNUM = @LT_Data-RSNUM
+*    .
+
+
+
+  LOOP  AT LT_DATA INTO DATA(LS_DATA) .
+
+    DATA ES_HEADER                TYPE BAPI_ALM_ORDER_HEADER_E.
+    DATA RETURN                   TYPE STANDARD TABLE OF BAPIRET2.
+    CALL FUNCTION 'BAPI_ALM_ORDER_GET_DETAIL'
+      EXPORTING
+        NUMBER    = LS_DATA-AUFNR
+      IMPORTING
+        ES_HEADER = ES_HEADER
+      TABLES
+        RETURN    = RETURN.
+
+    MOVE ES_HEADER-ORDERID  TO GS_MAIN-CRF_LOG.
+    SHIFT GS_MAIN-CRF_LOG LEFT DELETING LEADING '0'.
+    MOVE ES_HEADER-MN_WK_CTR TO GS_MAIN-CME.
+
+****    MOVE ES_HEADER-SHORT_TEXT TO GS_MAIN-FUNCT_LOC."ES_HEADER-LONG_TEXT
+*    MOVE ES_HEADER-FUNCT_LOC TO GS_MAIN-FUNCT_LOC.
+    MOVE ES_HEADER-USERSTATUS TO GS_MAIN-READ_STATUS."Status
+    MOVE ES_HEADER-WBS_ELEM TO GS_MAIN-CHARGE_CODE.
+
+*READ WBS ELEMENT
+    CALL FUNCTION 'CONVERSION_EXIT_ABPSP_OUTPUT'
+      EXPORTING
+        INPUT  = GS_MAIN-CHARGE_CODE
+      IMPORTING
+        OUTPUT = GS_MAIN-CHARGE_CODE.
+
+
+
+
+    MOVE ES_HEADER-SUPERIOR_ORDERID TO GS_MAIN-PARENT_CRF.
+    MOVE ES_HEADER-START_DATE TO GS_MAIN-A_S_DATE.
+    MOVE ES_HEADER-FINISH_DATE TO GS_MAIN-A_F_DATE.
+    MOVE LS_DATA-STRMN TO GS_MAIN-P_S_DATE.
+    MOVE LS_DATA-LTRMN TO GS_MAIN-P_C_DATE.
+    MOVE LS_DATA-NAME1 TO GS_MAIN-AWARDED_TO.
+    MOVE LS_DATA-QMNUM TO GS_MAIN-QMNUM.
+    MOVE LS_DATA-VENDOR_NAME TO GS_MAIN-VENDOR_NAME.
+    MOVE LS_DATA-ZLIFNR TO GS_MAIN-VENDOR_ID.
+
+    GS_MAIN-WORK_TYPE_CODE =    LS_DATA-INGRP.
+    GS_MAIN-WORK_TYPE_DESC =    LS_DATA-INNAM.
+    GS_MAIN-RAISE_DATE =    LS_DATA-GSTRP.
+    GS_MAIN-SERVICES_CODE =    LS_DATA-ILART.
+    GS_MAIN-SERVICES_DESC =    LS_DATA-ILATX.
+    GS_MAIN-R_C_DATE =    LS_DATA-GLTRP.
+    GS_MAIN-R_B_PNO =    LS_DATA-ERNAM.
+    GS_MAIN-P_C_DATE =    LS_DATA-LACD_DATE.
+
+
+
+*for relase order working and code
+    BREAK AC_ADNAN.
+    GS_MAIN-RELEASE_ORDER  =  REDUCE #( INIT TEXT = `` FOR <LINE> IN LT_PM_ORD_TO_PO
+                 WHERE ( AUFNR = LS_DATA-AUFNR )         NEXT  TEXT = TEXT && ',' &&  <LINE>-EBELN  ).
+    SHIFT GS_MAIN-RELEASE_ORDER LEFT DELETING LEADING ','.
+
+    GS_MAIN-SERVICE_COST = REDUCE DMSHB( INIT VAL TYPE FAGL_CURRVAL_10 FOR WA_COST IN LT_PM_ORD_TO_PO
+                WHERE ( AUFNR = LS_DATA-AUFNR )     NEXT VAL = VAL + WA_COST-KWERT ).
+
+*    GS_MAIN-RELEASE_ORDER =    LS_DATA-EBELN.
+
+    GS_MAIN-CRF_PRIORITIES_CODE =    LS_DATA-PRIOK.
+    GS_MAIN-CRF_PRI_DESC =    LS_DATA-PRIOKX.
+
+    IF LS_DATA-ANLZU = '2'..
+      GS_MAIN-PO =    'X'.
+    ELSEIF   LS_DATA-ANLZU = '3'..
+      GS_MAIN-BPO =    'X'.
+    ENDIF.
+
+
+*BOC Read Text Long Text
+
+    DATA CLIENT           TYPE SY-MANDT.
+    DATA ID               TYPE THEAD-TDID.
+    DATA LANGUAGE         TYPE THEAD-TDSPRAS.
+    DATA NAME             TYPE THEAD-TDNAME.
+    DATA OBJECT           TYPE THEAD-TDOBJECT.
+    DATA ARCHIVE_HANDLE   TYPE SY-TABIX.
+    DATA HEADER           TYPE THEAD.
+    DATA OLD_LINE_COUNTER TYPE THEAD-TDTXTLINES.
+    DATA LINES            TYPE STANDARD TABLE OF TLINE.
+    NAME = SY-MANDT && LS_DATA-AUFNR.
+    CALL FUNCTION 'READ_TEXT'
+      EXPORTING
+        CLIENT                  = SY-MANDT
+        ID                      = 'KOPF'
+        LANGUAGE                = SY-LANGU
+        NAME                    = NAME
+        OBJECT                  = 'AUFK'
+        ARCHIVE_HANDLE          = 0
+        LOCAL_CAT               = ' '
+      IMPORTING
+        HEADER                  = HEADER
+        OLD_LINE_COUNTER        = OLD_LINE_COUNTER
+      TABLES
+        LINES                   = LINES
+      EXCEPTIONS
+        ID                      = 1
+        LANGUAGE                = 2
+        NAME                    = 3
+        NOT_FOUND               = 4
+        OBJECT                  = 5
+        REFERENCE_CHECK         = 6
+        WRONG_ACCESS_TO_ARCHIVE = 7.
+
+    GS_MAIN-SCOPE  =  REDUCE #( INIT TEXT = `` FOR <SCOPE> IN LINES
+                          NEXT  TEXT = TEXT && '-' &&  <SCOPE>-TDLINE  ).
+
+*EOC Read Text Long Text
+
+*    CONCATENATE ES_HEADER-SHORT_TEXT
+*    LS_DATA-POST1
+*    INTO GS_MAIN-FUNCT_LOC SEPARATED BY SPACE.
+
+*for Requested by Name
+    DATA USER_USR03              TYPE USR03.
+    CALL FUNCTION 'SUSR_USER_ADDRESS_READ'
+      EXPORTING
+        USER_NAME              = LS_DATA-ERNAM
+      IMPORTING
+        USER_USR03             = USER_USR03
+      EXCEPTIONS
+        USER_ADDRESS_NOT_FOUND = 1.
+    CONCATENATE USER_USR03-NAME1  USER_USR03-NAME2  INTO GS_MAIN-R_B_NAME SEPARATED BY SPACE.
+
+    BREAK AC_ADNAN.
+*For Material Code
+    DATA:LV_AMOUNT TYPE P DECIMALS 3.
+    DATA:LV_TOTAL TYPE P DECIMALS 3.
+    DATA MATERIAL_GENERAL_DATA TYPE BAPIMATDOA.
+    DATA RETURN_M                TYPE BAPIRETURN.
+    DATA MATERIALPLANTDATA     TYPE BAPIMATDOC.
+    DATA MATERIALVALUATIONDATA TYPE BAPIMATDOBEW.
+    DATA MATERIAL TYPE  MATNR18.
+
+    CLEAR LV_AMOUNT.
+    LOOP AT LT_RESB INTO DATA(LS_RESB) WHERE RSNUM = LS_DATA-RSNUM..
+
+      MATERIAL = LS_RESB-MATNR.
+      CALL FUNCTION 'BAPI_MATERIAL_GET_DETAIL'
+        EXPORTING
+          MATERIAL              = MATERIAL
+          PLANT                 = LS_RESB-WERKS
+          VALUATIONAREA         = LS_RESB-WERKS
+*         VALUATIONTYPE         = VALUATIONTYPE
+*         MATERIAL_EVG          = MATERIAL_EVG
+*         MATERIAL_LONG         = MATERIAL_LONG
+        IMPORTING
+          MATERIAL_GENERAL_DATA = MATERIAL_GENERAL_DATA
+          RETURN                = RETURN_M
+          MATERIALPLANTDATA     = MATERIALPLANTDATA
+          MATERIALVALUATIONDATA = MATERIALVALUATIONDATA.
+
+      GS_LV_CHECK-AMOUNT = MATERIALVALUATIONDATA-MOVING_PR.
+      GS_LV_CHECK-QTY = LS_RESB-ISSUED_QTY.
+      GS_LV_CHECK-LV_TOTAL = GS_LV_CHECK-AMOUNT * GS_LV_CHECK-QTY .
+      APPEND GS_LV_CHECK TO GS_MAIN-LV_CHECK.
+      CLEAR GS_LV_CHECK.
+    ENDLOOP.
+    GS_MAIN-MATERIAL_COST = REDUCE DMSHB( INIT VAL TYPE FAGL_CURRVAL_10 FOR WA IN  GS_MAIN-LV_CHECK
+                  NEXT VAL = VAL + WA-LV_TOTAL ).
+
+*For Service Cost
+    CALL FUNCTION 'BAPI_PO_GETDETAIL'
+      EXPORTING
+        PURCHASEORDER              = LS_DATA-EBELN
+        ITEMS                      = 'X'
+        ACCOUNT_ASSIGNMENT         = 'X'
+        SCHEDULES                  = 'X'
+        HISTORY                    = 'X'
+        ITEM_TEXTS                 = 'X'
+        HEADER_TEXTS               = 'X'
+        SERVICES                   = 'X'
+        CONFIRMATIONS              = 'X'
+        SERVICE_TEXTS              = 'X'
+        EXTENSIONS                 = 'X'
+      IMPORTING
+        PO_HEADER                  = GS_PO_HEADER
+*       PO_ADDRESS                 = GS_PO_ADDRESS
+      TABLES
+*       PO_HEADER_TEXTS            = GT_PO_HEADER_TEXTS
+        PO_ITEMS                   = GT_PO_ITEMS
+        PO_ITEM_ACCOUNT_ASSIGNMENT = GT_PO_ITEM_ACCOUNT_ASSIGNMENT
+*       PO_ITEM_SCHEDULES          = GT_PO_ITEM_SCHEDULES
+*       PO_ITEM_CONFIRMATIONS      = GT_PO_ITEM_CONFIRMATIONS
+*       PO_ITEM_TEXTS              = GT_PO_ITEM_TEXTS
+*       PO_ITEM_HISTORY            = GT_PO_ITEM_HISTORY
+*       PO_ITEM_HISTORY_TOTALS     = GT_PO_ITEM_HISTORY_TOTALS
+*       PO_ITEM_LIMITS             = GT_PO_ITEM_LIMITS
+*       PO_ITEM_CONTRACT_LIMITS    = GT_PO_ITEM_CONTRACT_LIMITS
+        PO_ITEM_SERVICES           = GT_PO_ITEM_SERVICES
+*       PO_ITEM_SRV_ACCASS_VALUES  = GT_PO_ITEM_SRV_ACCASS_VALUES
+        RETURN                     = GT_RETURN
+*       PO_SERVICES_TEXTS          = GT_PO_SERVICES_TEXTS.
+      .
+
+**For Actual and finish Dates
+*    READ TABLE LT_JCDS INTO DATA(LS_JCDS_Start) WITH KEY STAT = 'I0002'.
+*    IF SY-SUBRC = 0 .
+*      MOVE LS_JCDS_Start-UDATE TO GS_MAIN-A_S_DATE.
+*    ENDIF.
+*
+*    READ TABLE LT_JCDS INTO DATA(LS_JCDS_Finish) WITH KEY STAT = 'I0045'.
+*    IF SY-SUBRC = 0 .
+*      MOVE LS_JCDS_Finish-UDATE TO GS_MAIN-A_F_DATE.
+*    ENDIF.
+
+*Forth Level of functional location
+    DATA: TEXT_TAB TYPE TABLE OF STRING.
+    DATA: LV_TEXT TYPE STRING,
+          LV_ZONE TYPE STRING..
+    CLEAR LV_ZONE.
+    BREAK ac_Adnan.
+    IF ES_HEADER-FUNCT_LOC IS NOT INITIAL.
+      SPLIT ES_HEADER-FUNCT_LOC AT '-' INTO TABLE TEXT_TAB.
+      DELETE  TEXT_TAB FROM 5 TO 99999.
+      LV_ZONE  =  REDUCE #( INIT TEXT = `` FOR <LINE1> IN TEXT_TAB
+                      NEXT  TEXT = TEXT && '-' &&  <LINE1>  ).
+      SHIFT LV_ZONE LEFT DELETING LEADING  '-'.
+
+      FUNCTLOCATION = LV_ZONE.
+
+      CALL FUNCTION 'BAPI_FUNCLOC_GETDETAIL'
+        EXPORTING
+          FUNCTLOCATION             = FUNCTLOCATION
+          REQUEST_INSTALLATION_DATA = 'X'
+        IMPORTING
+          DATA_GENERAL_EXP          = DATA_GENERAL_EXP
+          DATA_SPECIFIC_EXP         = DATA_SPECIFIC_EXP
+          RETURN                    = RETURN_ZONE
+          DATA_INSTALLATION         = DATA_INSTALLATION
+        TABLES
+          EXTENSIONOUT              = EXTENSIONOUT_ZONE.
+      GS_MAIN-FUNCT_LOC = DATA_INSTALLATION-FUNCLOCSTRUCIDENTIFYINGOBJDES2.
+    ENDIF.
+
+    "APPROVED BY
+*RReceiving Facility Representative:
+    FIELD-SYMBOLS:<FS> TYPE ANY.
+    DATA:LV_FIELD TYPE STRING.
+    LOOP AT LT_JCDS INTO DATA(LS_JCDS)
+      WHERE OBJNR = LS_DATA-OBJNR AND STAT = 'E0002'.
+      LV_FIELD = 'GS_MAIN-B_O_NAME'.
+      GS_MAIN-BUDGET_OWNER_ID = LS_JCDS-USNAM.
+
+      ASSIGN (LV_FIELD) TO <FS>.
+      IF <FS> IS ASSIGNED.
+        READ TABLE LT_USER_ADDR INTO DATA(LS_USER_ADDR_FS_AUFK) WITH KEY BNAME = LS_JCDS-USNAM BINARY SEARCH.
+        IF SY-SUBRC = 0.
+          MOVE LS_USER_ADDR_FS_AUFK-NAME_TEXTC TO <FS>.
+        ENDIF.
+      ENDIF.
+      CLEAR LV_FIELD.
+    ENDLOOP.
+    LOOP AT LT_JCDS INTO DATA(LS_JCDS_E004)
+      WHERE OBJNR = LS_DATA-OBJNR AND STAT = 'E0004'.
+      LV_FIELD = 'GS_MAIN-C_M_A_NAME'.
+      GS_MAIN-C_M_A_PNO = LS_JCDS_E004-USNAM.
+      GS_MAIN-C_M_A_DATE = LS_JCDS_E004-UDATE.
+
+      ASSIGN (LV_FIELD) TO <FS>.
+      IF <FS> IS ASSIGNED.
+        READ TABLE LT_USER_ADDR INTO DATA(LS_USER_ADDR_FS) WITH KEY BNAME = LS_JCDS_E004-USNAM BINARY SEARCH.
+        IF SY-SUBRC = 0.
+          MOVE LS_USER_ADDR_FS-NAME_TEXTC TO <FS>.
+        ENDIF.
+      ENDIF.
+      CLEAR LV_FIELD.
+    ENDLOOP.
+    "
+
+***For split function location
+**    BREAK-POINT.
+**    DATA : LV_FUNC_CHK TYPE String.
+**
+**    SPLIT ES_HEADER-FUNCT_LOC AT '-' INTO S1 S2 S3 S4 S5 S6.
+**
+**    CONCATENATE S1 S2 S3 S4 INTO LV_FUNC_CHK SEPARATED BY '-'.
+**
+**    SELECT SINGLE PLTXU INTO  @GS_MAIN-FUNCT_LOC FROM IFLO WHERE TPLNR = @LV_FUNC_CHK.
+
+
+
+    APPEND GS_MAIN TO GT_MAIN.
+    CLEAR GS_MAIN.
+
+  ENDLOOP.
+
+
+
+
+
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*&      Form  SET_OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+
+FORM SET_OUTPUT .
+
+  DATA: FM_NAME         TYPE RS38L_FNAM,
+        FP_DOCPARAMS    TYPE SFPDOCPARAMS,
+        FP_OUTPUTPARAMS TYPE SFPOUTPUTPARAMS.
+
+
+
+  CALL FUNCTION 'FP_JOB_OPEN'
+    CHANGING
+      IE_OUTPUTPARAMS = FP_OUTPUTPARAMS
+    EXCEPTIONS
+      CANCEL          = 1
+      USAGE_ERROR     = 2
+      SYSTEM_ERROR    = 3
+      INTERNAL_ERROR  = 4
+      OTHERS          = 5.
+
+  IF SY-SUBRC <> 0.
+    " MESSAGE 'Abode Form Server Error' TYPE 'E'.
+    MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+                            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CALL FUNCTION 'FP_FUNCTION_MODULE_NAME'           "& Form Processing Generation
+    EXPORTING
+      I_NAME     = 'ZPM_CRF_FORM_CARD'
+    IMPORTING
+      E_FUNCNAME = FM_NAME.
+
+  CALL FUNCTION FM_NAME
+    EXPORTING
+      /1BCDWB/DOCPARAMS = FP_DOCPARAMS
+      GT_MAIN           = GT_MAIN
+*    IMPORTING
+*     /1BCDWB/FORMOUTPUT       =
+    EXCEPTIONS
+      USAGE_ERROR       = 1
+      SYSTEM_ERROR      = 2
+      INTERNAL_ERROR    = 3.
+
+  IF SY-SUBRC <> 0.
+    "MESSAGE 'Abode Form Server Error' TYPE 'E'.
+    MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+                            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CALL FUNCTION 'FP_JOB_CLOSE'
+*    IMPORTING
+*     E_RESULT             =
+    EXCEPTIONS
+      USAGE_ERROR    = 1
+      SYSTEM_ERROR   = 2
+      INTERNAL_ERROR = 3
+      OTHERS         = 4.
+
+  IF SY-SUBRC <> 0.
+    " MESSAGE 'Abode Form Server Error' TYPE 'E'.
+    MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+                            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+ENDFORM.

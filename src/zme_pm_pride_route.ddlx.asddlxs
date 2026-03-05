@@ -1,0 +1,67 @@
+@Metadata.layer: #CORE
+
+@UI.headerInfo: {
+    typeName: 'Route',
+    typeNamePlural: 'Routes'}
+
+@UI.presentationVariant: [{
+    sortOrder: [{
+        by: 'SDate',
+        direction:#DESC
+    }]}]
+@Search.searchable: true
+annotate view zi_pm_route_data with
+{
+  @UI.facet: [{id: 'Routes',
+              purpose: #STANDARD,
+              label: 'Route',
+              position: 10,
+              type: #IDENTIFICATION_REFERENCE},
+
+              {id: 'Details',
+              purpose: #STANDARD,
+              label: 'Route Details',
+              position: 20,
+              type: #LINEITEM_REFERENCE,
+              targetElement: '_details'
+              }]
+
+  @UI.lineItem: [{position: 10 ,  label: 'Route Name'}]
+  @UI.identification: [{   position: 10 }]
+  @UI.selectionField: [{position: 10  }]
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+
+  RouteName;
+  @EndUserText.label: 'Route ID'
+  @UI.lineItem: [{position: 20 ,  label: 'Route ID'}]
+  RouteId;
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+        name: 'zi_pm_loc_txt_r',
+        element: 'Location'
+    }
+  }]
+  @UI.selectionField: [{position: 20 }]
+  @UI.identification: [{   position: 20 }]
+  @UI.lineItem: [{position: 30 }]
+
+  Location;
+
+  @UI.identification: [{   position: 30 }]
+
+  @UI.lineItem: [{position: 40 }]
+  SDate;
+  @UI.selectionField: [{position: 30 }]
+  @UI.lineItem: [{position: 50 }]
+  EDate;
+  @UI.lineItem: [{position: 60 }]
+  STime;
+  @UI.lineItem: [{position: 70 }]
+  ETime;
+  
+  @EndUserText.label: 'Active'
+  Active;
+
+
+}

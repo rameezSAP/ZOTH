@@ -1,0 +1,53 @@
+*&---------------------------------------------------------------------*
+*& Report ZPM_CRF_REPORT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZPM_CRF_REPORT.
+
+INCLUDE: ZPM_CRF_REPORT_S01,
+          ZPM_CRF_REPORT_F01.
+
+
+START-OF-SELECTION.
+
+  DATA: LO_ADDITIONAL_CONDITION TYPE REF TO IF_SALV_IDA_CONDITION,
+        LO_CONDITION_FACTORY    TYPE REF TO IF_SALV_IDA_CONDITION_FACTORY.
+
+*BOC GET CDS VIEW
+  DATA(O_DATA) = CL_SALV_GUI_TABLE_IDA=>CREATE_FOR_CDS_VIEW(
+    IV_CDS_VIEW_NAME = 'ZPM_CRF_REPORYT_CDS'
+  ).
+
+*  Applying filters to columns
+  DATA(O_SEL) = NEW CL_SALV_RANGE_TAB_COLLECTOR( ).
+  O_SEL->ADD_RANGES_FOR_NAME( IV_NAME = 'RSNUM' IT_RANGES = S_RSNUM[] ).
+  O_SEL->ADD_RANGES_FOR_NAME( IV_NAME = 'AUFNR' IT_RANGES = S_AUFNR[] ).
+  O_SEL->ADD_RANGES_FOR_NAME( IV_NAME = 'MATNR' IT_RANGES = S_MATNR[] ).
+
+
+*Get Name and Ranges
+  O_SEL->GET_COLLECTED_RANGES(
+    IMPORTING
+      ET_NAMED_RANGES = DATA(LT_DEFINE_RAGES)
+  ).
+
+*Set Selected Range To ALV
+  O_DATA->SET_SELECT_OPTIONS( IT_RANGES = LT_DEFINE_RAGES ).
+
+*Get Field Catalog reference
+  DATA(LO_FLDCATLOG) = O_DATA->FIELD_CATALOG( ).
+
+*Get all columns of ALV
+  LO_FLDCATLOG->GET_ALL_FIELDS( IMPORTING ETS_FIELD_NAMES = DATA(LTS_FIELD_NAMES) ).
+
+*  DELETE LTS_FIELD_NAMES WHERE TABLE_LINE = 'VTWEG'.
+*  LO_FLDCATLOG->SET_AVAILABLE_FIELDS( LTS_FIELD_NAMES ).
+*
+  "Allow Text Search in general
+*  O_DATA->STANDARD_FUNCTIONS( )->SET_TEXT_SEARCH_ACTIVE( ABAP_TRUE ).
+**  "Release Text Search on textual columns
+*  O_DATA->FIELD_CATALOG( )->ENABLE_TEXT_SEARCH( 'LIFNR' ).
+
+*Display ALV IDA
+  O_DATA->FULLSCREEN( )->DISPLAY( ).

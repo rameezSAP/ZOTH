@@ -1,0 +1,91 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Equipment Detail',
+    typeNamePlural: 'Equipments Detail',
+    title.value: 'Equipment'
+}
+
+@UI.chart: [{
+    qualifier: 'Chart1',   //refers to targetQualifier defined in chart facet in Z_C_TRAVEL_UI
+    title: 'Pending Count',
+    chartType: #COMBINATION_DUAL,
+    dimensions: [ 'Equipment'],
+    measures: [ 'rem_count', 'isActive'],
+    measureAttributes: [ {measure: 'rem_count', role: #AXIS_1},
+                         {measure: 'isActive', role: #AXIS_2} ],
+    dimensionAttributes: [ {dimension: 'Equipment', role: #SERIES} ],
+    description: 'Chart shows flight prices of travel by the airlines used per each booking.'
+    }
+]
+annotate view ZC_PM_PRIDE_ROUTE_ADMIN_DET_M with
+{
+
+  @UI.facet: [{
+          id: 'RouteHeaderInfo',
+          purpose: #HEADER,
+          type: #DATAPOINT_REFERENCE,
+          position: 10,
+          targetQualifier: 'EquipmentDetails'
+      },
+
+       { id: 'routeDetails1',position: 20,label: 'Routes Details',type: #IDENTIFICATION_REFERENCE  },
+   { id: 'EquipmentDetails',position: 30,label: 'Equipment Details',type: #LINEITEM_REFERENCE ,targetElement: '_detailsMP'}]
+
+  @UI: { lineItem: [{position: 40 ,label: 'RouteID'}], identification: [{position: 40 }] }
+  @Search.defaultSearchElement: true
+  @EndUserText.label: 'Route ID'
+  RouteId;
+  //    RouteId;
+  //    CDate;
+  //    CTime;
+  @UI: { lineItem: [{position: 20 }], identification: [{position: 20 }] }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  FuncLoc;
+  @UI: { lineItem: [{position: 30 }], identification: [{position: 30 }] }
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.8
+  @UI.dataPoint: { qualifier: 'EquipmentDetails', title: 'Equipment' }
+  Equipment;
+  //  @UI: { lineItem: [{position: 40 }]  }
+  //  @Search.defaultSearchElement: true
+  //  MeasurePoint;
+  //  //    Location;
+  //  //    EDate;
+  //  //   ETime;
+  //  @UI: { lineItem: [{position: 50 }]  }
+  //  Value;
+  //  @UI: { lineItem: [{position: 60 }]  }
+  //  Uom;
+  @UI: { lineItem: [{position: 60 ,label: 'Count',criticality: 'critical'}] }
+  @UI.textArrangement: #TEXT_ONLY
+  rem_count;
+  //   ,
+  //   identification: [{position: 60 },{ type: #FOR_ACTION ,dataAction: 'addEquipment', label: 'Add Equipment' }]
+  @UI: { lineItem: [{position: 60 ,label: 'Status',criticality: 'critical_status'}
+//  ,
+//  { type: #FOR_ACTION ,dataAction: 'NotRunning', label: 'Not Running', criticality: 'pos' },
+//  { type: #FOR_ACTION ,dataAction: 'Running', label: 'Running', criticality: 'neg' }
+//  
+  ]
+  ,
+  identification: [{position: 60 }
+//  ,
+//  { type: #FOR_ACTION ,dataAction: 'NotRunning', label: 'Not Running', criticality: 'neg' }
+//  ,{ type: #FOR_ACTION ,dataAction: 'Running', label: 'Running', criticality: 'pos' }
+  ]}
+  //  @UI: { lineItem: [{position: 60 ,label: 'Status',criticality: 'critical_status'}]}
+  @UI.textArrangement: #TEXT_ONLY
+  @UI.dataPoint: { qualifier: 'EquipmentDetails', title: 'Status', criticality: 'critical_status' }
+  isActive;
+  @UI.hidden: true
+  critical;
+  @UI.hidden: true
+  critical_status;
+
+  @UI.hidden: true
+  neg;
+  @UI.hidden: true
+  pos;
+}

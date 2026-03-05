@@ -1,0 +1,53 @@
+@Metadata.layer: #CORE
+//@UI.headerInfo: {
+//    typeName: 'Reading',
+//    typeNamePlural: 'Readings',
+//    title.value: 'POINT',
+//    description.label: 'Measuring Point : '
+//}
+
+@UI.presentationVariant: [{
+        sortOrder: [{
+            by: 'MDOCM',
+            direction: #DESC
+        }]
+}]        
+annotate view ZC_PM_PRIDE_ROUTE_MP_READ
+    with 
+{
+  @UI.facet: [{
+          id: 'RouteHeaderInfo',
+          purpose: #STANDARD,
+          type: #DATAPOINT_REFERENCE,
+          position: 10,
+          targetQualifier: 'EquipmentDetails'
+      }]
+      
+  @UI: { lineItem: [{position: 10}] }      
+    MDOCM;
+  
+//  @UI: { lineItem: [{position: 20}] }
+@UI.dataPoint: { qualifier: 'EquipmentDetails', title: 'Measuring Point'}
+    POINT;
+  @UI: { lineItem: [{position: 20, importance: #MEDIUM}] }
+    IDATE;
+    @UI: { lineItem: [{position: 30}] }
+    ITIME;
+//    @UI: { lineItem: [{position: 40}] }
+//    ERDAT;
+//    @UI: { lineItem: [{position: 40}] }
+//    ERUHR;
+//    @UI: { lineItem: [{position: 40}] }
+//    READG;
+    @UI: { lineItem: [{position: 50}] }
+    RECDV;
+//    @UI: { lineItem: [{position: 60}] }
+//    RECDU;
+//    @UI: { lineItem: [{position: 70,importance:#HIGH }] }
+//    CNTRR;
+//    @UI: { lineItem: [{position: 40}] }
+//    CDIFF;
+//    @UI: { lineItem: [{position: 40}] }
+//    IDIFF;
+    
+}
