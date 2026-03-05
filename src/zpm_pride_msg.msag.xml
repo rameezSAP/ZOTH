@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Pride : Message Class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>000</MSGNR>
+     <TEXT>Equipment &amp;1 is invalid. Please select correct Equipment</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Functional Location &amp;1 is incorrect.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>MP: &amp;3 : Value &amp;1 is Less than  &amp;2 value.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>MP: &amp;3 : Value &amp;1 is Higher than  &amp;2 value.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Please enter reading after date &amp;1 and time &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Reading Already exist on Date:&amp;1 and Time: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>Please enter Route Name</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>Please enter Location</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>008</MSGNR>
+     <TEXT>Please enter Schdule Hours</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>009</MSGNR>
+     <TEXT>Please enter reading in correct format.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>010</MSGNR>
+     <TEXT>Route has been completed and New Route with No: &amp;1 is creaeted.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>Please enter Plant</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>012</MSGNR>
+     <TEXT>PLease enter Equipment Frequency(Hours).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>013</MSGNR>
+     <TEXT>Please enter value from the selection.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>014</MSGNR>
+     <TEXT>Equipment: &amp;1 already exist on Route : &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>020</MSGNR>
+     <TEXT>Please enter Route</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>021</MSGNR>
+     <TEXT>Please enter End Date</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>022</MSGNR>
+     <TEXT>Please enter start date</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>023</MSGNR>
+     <TEXT>Please enter Location</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZPM_PRIDE_MSG</ARBGB>
+     <MSGNR>024</MSGNR>
+     <TEXT>Please enter Schedule</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>
