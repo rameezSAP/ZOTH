@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xfa generator="AdobeLiveCycleDesigner_V11.0.9.20220124.1.18_SAP" APIVersion="3.6.22017.0"?><xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/" timeStamp="2022-10-27T13:32:09Z" uuid="10254f21-6d64-4169-b79b-42344f0b0611">
+<template xmlns:xliff="urn:oasis:names:tc:xliff:document:1.1" xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
+   <?formServer defaultPDFRenderFormat acrobat10.0dynamic?>
+   <subform layout="tb" locale="en_US" name="data" restoreState="auto">
+      <pageSet>
+         <pageArea id="Page1" name="Page1">
+            <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+            <medium long="11in" short="8.5in" stock="letter"/>
+            <?templateDesigner expand 1?></pageArea>
+         <?templateDesigner expand 1?></pageSet>
+      <subform columnWidths="17.022mm 14.702mm 18.826mm 20.376mm 18.319mm 19.342mm 22.179mm 72.738mm" layout="table" name="GT_MAIN">
+         <subform id="overflowLeader_ID" layout="row" name="overflowLeader">
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="CFC4305D-CE69-4FA0-BC96-1829251BB23B">Basic Finish Date</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="4921ACCC-1287-4926-8A9A-4E73A3CBC4F6">Planing Plant</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="4137F6D0-1BAE-421D-A8E5-96A080DF50CC">Order No</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="0C56C376-B367-448C-9687-F541D48F4AD5">Notification No</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="8E49ECBB-D9F2-400D-A8B6-5B6A6DB2E252">Work Center</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="3419C5F3-9F55-4997-A783-8FD22B8953F5">PM NO</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="BFB0A705-0014-43D1-A47B-1EEB44F9D744">Technical ID</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <draw>
+               <ui>
+                  <textEdit>
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <value>
+                  <text xliff:rid="2ECEE758-FD0E-47A8-9B4F-B9C99CD63573">Error</text>
+               </value>
+               <font size="8pt" typeface="Calibri" weight="bold"/>
+               <para hAlign="center" vAlign="middle"/>
+               <margin bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm" topInset="0.5mm"/>
+               <border>
+                  <edge/>
+               </border>
+            </draw>
+            <assist role="TH"/>
+            <occur max="-1"/>
+            <bind match="none"/>
+            <?templateDesigner expand 0?></subform>
+         <subform layout="row" name="DATA">
+            <field minH="5.674mm" name="GLTRP" w="62mm">
+               <ui>
+                  <dateTimeEdit>
+                     <margin/>
+                  </dateTimeEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <value>
+                  <date/>
+               </value>
+               <border>
+                  <edge/>
+               </border>
+               <bind match="dataRef" ref="$.GLTRP"/>
+               <desc>
+                  <text name="Schema Annotation">Basic Finish Date</text>
+               </desc>
+            </field>
+            <field minH="5.674mm" name="IWERK" w="62mm" x="2.440944in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.IWERK"/>
+               <desc>
+                  <text name="Schema Annotation">Planing Plant</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <field minH="5.674mm" name="AUFNR" w="0.913903in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                     <border presence="hidden"/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.AUFNR"/>
+               <desc>
+                  <text name="Schema Annotation">Order No</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <field minH="5.674mm" name="QMNUM" w="62mm">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.QMNUM"/>
+               <desc>
+                  <text name="Schema Annotation">Notification No</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+               <value>
+                  <text maxChars="12"/>
+               </value>
+            </field>
+            <field minH="5.674mm" name="WORK_CENTER" w="62mm" x="2.440944in" y="0.354333in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.WORK_CENTER"/>
+               <desc>
+                  <text name="Schema Annotation">Work Center</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <field minH="5.674mm" name="PM_NO" w="62mm" x="4.881889in" y="0.354333in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.PM_NO"/>
+               <desc>
+                  <text name="Schema Annotation">PM NO</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <field minH="5.674mm" name="TECHNICAL_ID" w="62mm" y="0.708667in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.TECHNICAL_ID"/>
+               <desc>
+                  <text name="Schema Annotation">Technical ID</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <field minH="5.674mm" name="ERROR" w="62mm" x="2.440944in" y="0.708667in">
+               <ui>
+                  <textEdit multiLine="1">
+                     <margin/>
+                  </textEdit>
+               </ui>
+               <font size="8pt" typeface="Calibri"/>
+               <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+               <para vAlign="middle"/>
+               <bind match="dataRef" ref="$.ERROR"/>
+               <desc>
+                  <text name="Schema Annotation">Error</text>
+               </desc>
+               <border>
+                  <edge/>
+               </border>
+            </field>
+            <assist role="TR"/>
+            <occur max="-1"/>
+            <bind match="dataRef" ref="$.DATA[*]"/>
+            <?templateDesigner expand 0?>
+            <keep intact="none"/>
+         </subform>
+         <occur min="0"/>
+         <bind match="dataRef" ref="$.GT_MAIN"/>
+         <desc>
+            <text name="Schema Annotation">PM EMAIL INTIMATION</text>
+         </desc>
+         <overflow leader="overflowLeader"/>
+         <?templateDesigner expand 1?></subform>
+      <proto/>
+      <desc>
+         <text name="version">11.0.9.20220124.1.18.2</text>
+      </desc>
+      <?templateDesigner expand 1?>
+      <?renderCache.subset "Calibri" 1 0 ISO-8859-1 4 112 28 0003001100120018001C0026002F00440045004B00570064007401020110011A011E01280150015A015D016C016F0176017D018C0190019A BCDEFIMNOPTWacdefghiklnorst?></subform>
+   <?templateDesigner DefaultPreviewDynamic 1?>
+   <?templateDesigner DefaultRunAt client?>
+   <?templateDesigner Grid show:1, snap:1, units:0, color:ff8080, origin:(0,0), interval:(125000,125000)?>
+   <?templateDesigner WidowOrphanControl 0?>
+   <?templateDesigner DefaultCaptionFontSettings face:Arial;size:10;weight:normal;style:normal?>
+   <?templateDesigner DefaultValueFontSettings face:Arial;size:10;weight:normal;style:normal?>
+   <?templateDesigner DefaultLanguage JavaScript?>
+   <?acrobat JavaScript strictScoping?>
+   <?templateDesigner FormTargetVersion 33?>
+   <?templateDesigner Rulers horizontal:1, vertical:1, guidelines:1, crosshairs:0?>
+   <?templateDesigner Zoom 102?></template>
+<config xmlns="http://www.xfa.org/schema/xci/3.0/">
+   <agent name="designer">
+      <!--  [0..n]  -->
+      <destination>pdf</destination>
+      <pdf>
+         <!--  [0..n]  -->
+         <fontInfo/>
+      </pdf>
+      <common>
+         <template>
+            <base>http://uekhidev.uead.uep.com.pk:8000/sap/bc/fp/form/layout/</base>
+         </template>
+      </common>
+   </agent>
+   <present>
+      <!--  [0..n]  -->
+      <pdf>
+         <!--  [0..n]  -->
+         <version>1.7</version>
+         <adobeExtensionLevel>8</adobeExtensionLevel>
+      </pdf>
+      <common>
+         <data>
+            <xsl>
+               <uri/>
+            </xsl>
+            <outputXSL>
+               <uri/>
+            </outputXSL>
+         </data>
+      </common>
+      <xdp>
+         <packets>*</packets>
+      </xdp>
+   </present>
+   <psMap>
+      <font posture="normal" psName="Calibri-Bold" typeface="Calibri" weight="bold"/>
+      <font posture="normal" psName="Calibri" typeface="Calibri" weight="normal"/>
+   </psMap>
+</config>
+<connectionSet xmlns="http://www.xfa.org/schema/xfa-connection-set/2.8/">
+   <xsdConnection dataDescription="data" name="ZPM_EMAIL_INTIMATION_FORM">
+      <uri/>
+      <rootElement>data</rootElement>
+   </xsdConnection>
+</connectionSet>
+<xfa:datasets xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/">
+   <xfa:data xfa:dataNode="dataGroup"/>
+   <dd:dataDescription xmlns:dd="http://ns.adobe.com/data-description/" dd:name="data">
+      <data>
+         <GT_MAIN dd:minOccur="0">
+            <DATA dd:maxOccur="-1">
+               <GLTRP/>
+               <IWERK/>
+               <AUFNR/>
+               <QMNUM/>
+               <WORK_CENTER/>
+               <PM_NO/>
+               <TECHNICAL_ID/>
+               <ERROR/>
+            </DATA>
+         </GT_MAIN>
+      </data>
+   </dd:dataDescription>
+</xfa:datasets>
+<localeSet xmlns="http://www.xfa.org/schema/xfa-locale-set/2.7/">
+   <locale desc="English (United States)" name="en_US">
+      <calendarSymbols name="gregorian">
+         <monthNames>
+            <month>January</month>
+            <month>February</month>
+            <month>March</month>
+            <month>April</month>
+            <month>May</month>
+            <month>June</month>
+            <month>July</month>
+            <month>August</month>
+            <month>September</month>
+            <month>October</month>
+            <month>November</month>
+            <month>December</month>
+         </monthNames>
+         <monthNames abbr="1">
+            <month>Jan</month>
+            <month>Feb</month>
+            <month>Mar</month>
+            <month>Apr</month>
+            <month>May</month>
+            <month>Jun</month>
+            <month>Jul</month>
+            <month>Aug</month>
+            <month>Sep</month>
+            <month>Oct</month>
+            <month>Nov</month>
+            <month>Dec</month>
+         </monthNames>
+         <dayNames>
+            <day>Sunday</day>
+            <day>Monday</day>
+            <day>Tuesday</day>
+            <day>Wednesday</day>
+            <day>Thursday</day>
+            <day>Friday</day>
+            <day>Saturday</day>
+         </dayNames>
+         <dayNames abbr="1">
+            <day>Sun</day>
+            <day>Mon</day>
+            <day>Tue</day>
+            <day>Wed</day>
+            <day>Thu</day>
+            <day>Fri</day>
+            <day>Sat</day>
+         </dayNames>
+         <meridiemNames>
+            <meridiem>AM</meridiem>
+            <meridiem>PM</meridiem>
+         </meridiemNames>
+         <eraNames>
+            <era>BC</era>
+            <era>AD</era>
+         </eraNames>
+      </calendarSymbols>
+      <datePatterns>
+         <datePattern name="full">EEEE, MMMM D, YYYY</datePattern>
+         <datePattern name="long">MMMM D, YYYY</datePattern>
+         <datePattern name="med">MMM D, YYYY</datePattern>
+         <datePattern name="short">M/D/YY</datePattern>
+      </datePatterns>
+      <timePatterns>
+         <timePattern name="full">h:MM:SS A Z</timePattern>
+         <timePattern name="long">h:MM:SS A Z</timePattern>
+         <timePattern name="med">h:MM:SS A</timePattern>
+         <timePattern name="short">h:MM A</timePattern>
+      </timePatterns>
+      <dateTimeSymbols>GyMdkHmsSEDFwWahKzZ</dateTimeSymbols>
+      <numberPatterns>
+         <numberPattern name="numeric">z,zz9.zzz</numberPattern>
+         <numberPattern name="currency">$z,zz9.99|($z,zz9.99)</numberPattern>
+         <numberPattern name="percent">z,zz9%</numberPattern>
+      </numberPatterns>
+      <numberSymbols>
+         <numberSymbol name="decimal">.</numberSymbol>
+         <numberSymbol name="grouping">,</numberSymbol>
+         <numberSymbol name="percent">%</numberSymbol>
+         <numberSymbol name="minus">-</numberSymbol>
+         <numberSymbol name="zero">0</numberSymbol>
+      </numberSymbols>
+      <currencySymbols>
+         <currencySymbol name="symbol">$</currencySymbol>
+         <currencySymbol name="isoname">USD</currencySymbol>
+         <currencySymbol name="decimal">.</currencySymbol>
+      </currencySymbols>
+      <typefaces>
+         <typeface name="Myriad Pro"/>
+         <typeface name="Minion Pro"/>
+         <typeface name="Courier Std"/>
+         <typeface name="Adobe Pi Std"/>
+         <typeface name="Adobe Hebrew"/>
+         <typeface name="Adobe Arabic"/>
+         <typeface name="Adobe Thai"/>
+         <typeface name="Kozuka Gothic Pro-VI M"/>
+         <typeface name="Kozuka Mincho Pro-VI R"/>
+         <typeface name="Adobe Ming Std L"/>
+         <typeface name="Adobe Song Std L"/>
+         <typeface name="Adobe Myungjo Std M"/>
+         <typeface name="Adobe Devanagari"/>
+      </typefaces>
+   </locale>
+</localeSet>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c015 81.161580, 2017/12/01-01:38:21        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:pdf="http://ns.adobe.com/pdf/1.3/" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/" xmlns:desc="http://ns.adobe.com/xfa/promoted-desc/" rdf:about="">
+         <xmp:MetadataDate>2022-10-27T13:32:09Z</xmp:MetadataDate>
+         <xmp:CreatorTool>Adobe LiveCycle Designer 11.0</xmp:CreatorTool>
+         <pdf:Producer>Adobe LiveCycle Designer 11.0</pdf:Producer>
+         <xmpMM:DocumentID>uuid:10254f21-6d64-4169-b79b-42344f0b0611</xmpMM:DocumentID>
+         <desc:version rdf:parseType="Resource">
+            <rdf:value>11.0.9.20220124.1.18.2</rdf:value>
+            <desc:ref>/template/subform[1]</desc:ref>
+         </desc:version>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta></xdp:xdp>
