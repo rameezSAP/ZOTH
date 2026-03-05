@@ -1,0 +1,8 @@
+@EndUserText.label: 'Pride: Route Service Definition'
+define service ZSD_PM_PRIDE_ROUTES_M {
+  expose ZC_PM_PRIDE_ROUTE_M;
+  expose Zc_PM_PRIDE_ROUTE_DET_M;
+  expose ZC_PM_PRIDE_ROUTE_MP_M;
+  expose ZC_PM_PRIDE_ROUTE_MP_READ;
+  expose ZI_PM_PRIDE_EMAIL_ROUTE_MAP;
+}

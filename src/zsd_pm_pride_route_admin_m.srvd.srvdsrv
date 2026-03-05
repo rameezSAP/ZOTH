@@ -1,0 +1,6 @@
+@EndUserText.label: 'Pride: Admin Operator'
+define service ZSD_PM_PRIDE_ROUTE_ADMIN_M {
+  expose ZC_PM_PRIDE_ROUTE_ADMIN_M;
+  expose ZC_PM_PRIDE_ROUTE_ADMIN_DET_M;
+  expose ZC_PM_PRIDE_ROUTE_ADMIN_MP_M;
+}

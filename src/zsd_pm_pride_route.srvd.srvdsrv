@@ -1,0 +1,5 @@
+@EndUserText.label: 'PRide: Route Service Definition'
+define service Zsd_pm_pride_route {
+  expose zi_pm_route_data;
+  expose zi_pm_route_details;
+}
