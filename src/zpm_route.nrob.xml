@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_NROB" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <ATTRIBUTES>
+    <OBJECT>ZPM_ROUTE</OBJECT>
+    <DOMLEN>CHAR10</DOMLEN>
+    <PERCENTAGE>10.0</PERCENTAGE>
+    <BUFFER>X</BUFFER>
+    <NOIVBUFFER>00000001</NOIVBUFFER>
+    <UNAME>ABAPDEV</UNAME>
+    <UDATE>2024-08-19</UDATE>
+    <UTIME>17:33:04</UTIME>
+   </ATTRIBUTES>
+   <TEXT>
+    <LANGU>E</LANGU>
+    <OBJECT>ZPM_ROUTE</OBJECT>
+    <TXT>PRide : Route NR</TXT>
+    <TXTSHORT>PRide : Route NR</TXTSHORT>
+   </TEXT>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,122 @@
+FUNCTION ZUCT_MDOC_ACTION_AGENT_GET.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  TABLES
+*"      ACTOR_TAB STRUCTURE  SWHACTOR
+*"      AC_CONTAINER STRUCTURE  SWCONT
+*"----------------------------------------------------------------------
+  REFRESH ACTOR_TAB[].
+*Get parameters from container
+  DATA : L_OBJECT          TYPE SWC_OBJECT,
+         L_OBJKEY          TYPE SWOTOBJID-OBJKEY,
+         L_OBJTYPE         TYPE SWOTOBJID-OBJTYPE,
+         LV_COUNTER        TYPE ZPM_WF_ORD-LEVELS,
+         WF_TYPE           TYPE ZPM_WF_ORD-WF_TYPE,
+*         EQFNR             TYPE ZPM_WF_ORD-EQFNR,
+         IWERK             TYPE ZPM_WF_ORD-IWERK,
+         INGRP             TYPE ZPM_WF_ORD-INGRP,
+         ARBPL             TYPE ZPM_WF_ORD-ARBPL,
+         WERGW             TYPE ZPM_WF_ORD-WERGW,
+         LV_ZPM_WF_ORD_CRT TYPE ZPM_WF_ORD_CRT,
+         ZPM_ORD_WF type REF TO ZPM_WF_ORD,
+         LV_COUNTER_NEXT   TYPE NUMC2.
+
+  DATA LS_ACTOR      TYPE SWHACTOR.
+  DATA LS_OBJECT_KEY TYPE UCT9_S_BO_KEY.
+  DATA LD_STEP       TYPE UC_SEQNR.
+  DATA LT_AGENT      TYPE UCT_T_WFAGENT.
+  DATA LS_AGENT      TYPE SWW_AAGENT.
+  DATA LV_CHECK      TYPE STRING.
+
+  BREAK-POINT.
+  EXPORT SYST TO MEMORY ID 'USER_NAME'.
+
+
+  SWC_GET_ELEMENT AC_CONTAINER 'Counter' LV_COUNTER.
+  IF LV_COUNTER IS INITIAL.
+    LV_COUNTER = 1.
+  ENDIF.
+**  SWC_GET_ELEMENT AC_CONTAINER 'ZPM_ORD_WF-KEY-INGRP' INGRP.
+***  SWC_GET_ELEMENT AC_CONTAINER 'EQFNR'  EQFNR.
+**  SWC_GET_ELEMENT AC_CONTAINER 'IWERK'  IWERK.
+**  SWC_GET_ELEMENT AC_CONTAINER 'INGRP'  INGRP.
+**  SWC_GET_ELEMENT AC_CONTAINER 'ARBPL'  ARBPL.
+**  SWC_GET_ELEMENT AC_CONTAINER 'WERGW'  WERGW.
+*  SWC_GET_ELEMENT AC_CONTAINER 'ZPM_WF_ORD_CRT' LV_ZPM_WF_ORD_CRT.
+  FREE ACTOR_TAB.
+  SELECT * FROM ZPM_WF_ORD
+    INTO TABLE @DATA(LT_DATA)
+    WHERE LEVELS = @LV_COUNTER "AND
+*    WF_TYPE  = @WF_TYPE AND
+**    EQFNR    = @EQFNR   AND
+*    IWERK    = @IWERK   AND
+*    INGRP    = @INGRP   AND
+*    ARBPL    = @ARBPL   AND
+*    WERGW    = @WERGW
+    .
+
+
+
+  LOOP AT LT_DATA INTO DATA(LS_DATA).
+    LS_ACTOR-OTYPE = 'US'.
+    LS_ACTOR-OBJID = LS_DATA-ERNAM.
+    APPEND LS_ACTOR TO ACTOR_TAB.
+    LV_CHECK = 'X'.
+  ENDLOOP.
+  IF LV_CHECK = ''.
+    LV_COUNTER_NEXT = LV_COUNTER + 1.
+    SELECT * FROM ZPM_WF_ORD
+    INTO CORRESPONDING FIELDS OF TABLE @LT_DATA
+    WHERE LEVELS = @LV_COUNTER_NEXT .
+*      AND
+*    WF_TYPE  = @WF_TYPE AND
+**    EQFNR    = @EQFNR   AND
+*    IWERK    = @IWERK   AND
+*    INGRP    = @INGRP   AND
+*    ARBPL    = @ARBPL   AND
+*    WERGW    = @WERGW.
+    IF SY-SUBRC <> 0.
+***      FIELD-SYMBOLS:<FS> TYPE ANY.
+***      DATA:COMPANYCODE    LIKE BKPF-BUKRS,
+***           DOCUMENTNUMBER LIKE BKPF-BELNR,
+***           FISCALYEAR     LIKE BKPF-GJAHR.
+***
+***      ASSIGN ('(ZFI_CHEQUE)OBJECT-KEY-COMPANYCODE') TO <FS>.
+***      IF <FS> IS ASSIGNED.
+***        COMPANYCODE = <FS>.
+***        UNASSIGN <FS>.
+***      ENDIF.
+***      ASSIGN ('(ZFI_CHEQUE)OBJECT-KEY-DOCUMENTNUMBER') TO <FS>.
+***      IF <FS> IS ASSIGNED.
+***        DOCUMENTNUMBER = <FS>.
+***        UNASSIGN <FS>.
+***      ENDIF.
+***      ASSIGN ('(ZFI_CHEQUE)OBJECT-KEY-FISCALYEAR') TO <FS>.
+***      IF <FS> IS ASSIGNED.
+***        FISCALYEAR = <FS>.
+***        UNASSIGN <FS>.
+***      ENDIF.
+***      UPDATE ZFI_CHEQUE_POS SET FLAG = 'A'
+***      WHERE BUKRS  = COMPANYCODE AND
+***            BELNR  = DOCUMENTNUMBER AND
+***            GJAHR  = FISCALYEAR.
+***      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDIF.
+*
+*  swc_get_object_key l_object l_objkey.
+*  ls_object_key = l_objkey.
+
+
+  " LOOP AT lt_agent INTO ls_agent.
+*    ls_actor-otype = 'US'.
+*    ls_actor-objid = ls_agent.
+*    APPEND ls_actor TO actor_tab.
+  " ENDLOOP.
+*  IF LINES( ACTOR_TAB ) <= 0.
+*    RAISE NOBODY_FOUND.
+*  ENDIF.
+
+
+
+ENDFUNCTION.
