@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>PM Notification WF FG</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFG_PM_NOTTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFG_PM_NOT</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZFM_PM_NOT_NEXT_USER</FUNCNAME>
+     <SHORT_TEXT>PM Notification WF Next user</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>WF_KEY</PARAMETER>
+       <TYP>CHAR14</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IM_WF_ID</PARAMETER>
+       <TYP>ZWF_ID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IM_LEVEL</PARAMETER>
+       <TYP>ZLEVEL</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>INITIATOR</PARAMETER>
+       <TYP>WFSYST-INITIATOR</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>ET_AGENTS</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>ZTT_AGENT</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>WF_KEY</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Character Field of Length 12</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IM_WF_ID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Workflow ID</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IM_LEVEL</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>WF Levels</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>INITIATOR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Initiator of workflow instance</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>ET_AGENTS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>PM Workflow Agent Table Typw</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

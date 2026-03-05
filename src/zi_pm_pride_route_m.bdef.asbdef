@@ -1,0 +1,151 @@
+managed; //implementation in class zbp_i_pm_pride_route_m unique;
+strict;
+
+define behavior for ZI_PM_PRIDE_ROUTE_M alias route
+implementation in class zcl_bp_pm_pride_route_m unique
+persistent table zpm_pride_routes
+etag master LastChangeAt
+lock master
+authorization master ( global, instance )
+early numbering
+//etag master <field_name>
+{
+  field ( readonly ) RouteId, RouteName, SDate, STime, Location, Sechedule, Plant,ETimeEven;
+  action ( features : instance ) CompleteRoute result [1] $self;
+  action ( features : instance ) ReOpenRoute result [1] $self;
+    validation checkDuplicate on save { create; field EDate, ETime; }
+  determination clearMP on save { create; update; field EDate, ETime; }
+  determination moveActualDate on save { create; field EDate, ETime; }
+
+
+//  validation checkDuplicate on save { create; field EDate, ETime; }
+//  determination clearMP on save { create; update; field EDate, ETime; }
+//  determination moveActualDate on save { create; field EDate, ETime; }
+  validation routeField on save { create; update; }
+ //   create;
+  update;
+  //  delete;
+
+  // added by rameez 04.02.2026 to HANDLE Complete Route from API hit
+  determination createNewRoute on modify { field Active; }
+
+  association _details { create ( features : global ); }
+  mapping for zpm_pride_routes
+  { RouteName = route_name;
+    RouteId = route_id;
+    Location = location;
+    SDate = s_date;
+    EDate = e_date;
+    STime = s_time;
+    ETime = e_time;
+    LastChangeAt = last_change_at;
+    Active = active;
+    RouteRefID = route_ref_id;
+    RemainingCount = pending_count;
+    Plant = plant;
+    ETimeEven = e_time_even;
+  }
+
+}
+
+define behavior for ZI_PM_PRIDE_ROUTE_DET_M //alias <alias_name>
+implementation in class zcl_bp_pm_pride_route_det_m unique
+persistent table zpm_pride_hier_t
+etag master LastChangeAt
+lock dependent by _routes
+authorization dependent by _routes
+//early numbering
+//etag master <field_name>
+{
+  update;
+  delete;
+  action ( features : instance ) NotRunning result [1] $self;
+  action ( features : instance ) Running result [1] $self;
+  internal action calcCount;
+  internal action calcFomula;
+  // field ( readonly ) RouteName, RouteId, CDate, CTime, EDate, ETime, Location;
+
+  //-- changes by rameez (removed isActive
+//  field ( readonly ) RouteId, FuncLoc, Equipment, isActive, rem_count, formula_typ, formula, FormulaText;
+  field ( readonly ) RouteId, FuncLoc, Equipment, rem_count, formula_typ, formula, FormulaText;
+  field ( features : instance ) isActive;
+  //-- changes by rameez (removed isActive
+  field ( features : instance ) PrideDescription;
+  association _routes;
+  association _detailsMP { create ( features : global ); }
+
+  // added by ramee 04.02.2026
+  determination onStatusChange on modify { field isActive; }
+
+  mapping for zpm_pride_hier_t
+  {
+    RouteId = route_id;
+    FuncLoc = func_loc;
+    Equipment = equipment;
+    LastChangeAt = last_change_at;
+    isActive = active;
+    RemainingCount = pending_count;
+    formula_typ = formula_typ;
+    formula = formula;
+    comments = comments;
+    frequency = frequency;
+    TechType = tech_type;
+    FormulaText = for_text;
+    PrideDescription = pride_desc;
+  }
+}
+
+define behavior for ZI_PM_PRIDE_ROUTE_MP_M //alias <alias_name>
+implementation in class zcl_bp_pm_pride_route_mp_m unique
+persistent table zpm_pride_hier_m
+etag master LastChangeAt
+lock dependent by _routes
+authorization dependent by _routes
+//etag master <field_name>
+{
+  update;
+   delete;
+
+  // field ( readonly ) RouteName, RouteId, CDate, CTime, EDate, ETime, Location;
+
+  //-- changes by rameez (removed isActive from readonly
+//  field ( readonly ) RouteId, FuncLoc, Equipment, MeasurePoint, Uom, IsActive, LowLimit, HighLimit, formula_typ, MPDesc, formula_main, formulaMP, MPPositionChar,CreatedBy,CDate,CTime,Value;
+  field ( readonly ) RouteId, FuncLoc, Equipment, MeasurePoint, Uom, LowLimit, HighLimit, formula_typ, MPDesc, formula_main, formulaMP, MPPositionChar,CreatedBy,CDate,CTime,Value;
+  field ( features : instance ) IsActive;
+  //-- changes by rameez (removed IsActive from readonly
+
+  validation validateEquipment on save { create; update; field MeasurePoint; }
+
+  validation validateReadingChar on save { create; update; field value_char; }
+  determination moveToValue on modify { create; field IsActive, value_char; }
+  validation validateReading on save { create; update; field Value; }
+  action ( features : instance ) OutOfOrder result [1] $self;
+  action ( features : instance ) InOrder result [1] $self;
+  association _routes;
+  association _details;
+  determination calculateDetailCount on modify { create; field IsActive, Value; }
+  determination calculateFormula on save { create; field IsActive, Value; }
+  determination calculateMPFormula on save { create; field IsActive, Value; }
+  internal action resetMP;
+
+  determination onMPStatusChange on modify { field IsActive; }
+
+  mapping for zpm_pride_hier_m
+  {
+    RouteId = route_id;
+    FuncLoc = func_loc;
+    Equipment = equipment;
+    MeasurePoint = measure_point;
+    LastChangeAt = last_change_at;
+    CDate = c_date;
+    CTime = c_time;
+    CreatedBy = created_by;
+    Uom = uom;
+    Value = value;
+    value_char = value_char;
+    IsActive = active;
+    formula_typ = formula_typ;
+    formula_main = formula_main;
+    formulaMP = formula_mp;
+  }
+}

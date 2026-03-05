@@ -1,0 +1,111 @@
+managed; // implementation  in class zbp_i_pm_pride_route__temp_m unique;
+strict;
+
+define behavior for ZI_PM_PRIDE_ROUTE__TEMP_M
+implementation in class zbp_i_pm_pride_route_temp_m unique//alias <alias_name>
+persistent table zpm_pride_rout_t
+lock master
+authorization master ( instance )
+//etag master <field_name>
+early numbering
+{
+  field ( readonly ) RouteId;
+  //   RouteName, Location;
+  create;
+  update;
+  delete;
+  association _details { create; }
+  action ( features : instance ) SendRoute result [1] $self;
+  action ( features : instance ) StopRoute result [1] $self;
+  determination moveActualDate on save { create; field ETimeEven; }
+  validation routeField on save { create; update; }
+
+  mapping for zpm_pride_rout_t
+  { RouteName = route_name;
+    RouteId = route_id;
+    Location = location;
+    SDate = s_date;
+    EDate = e_date;
+    STime = s_time;
+    ETime = e_time;
+    LastChangeAt = last_change_at;
+    Active = active;
+    RouteSchedule = sechedule;
+    Plant = plant;
+    ETimeEven = e_time_even;
+  }
+}
+
+define behavior for ZI_PM_PRIDE_ROUTE_DET_TEMP_M //alias <alias_name>
+implementation in class zbp_i_pm_pride_rdet_t_m unique
+persistent table zpm_pride_rdet_t
+lock dependent by _routes
+authorization dependent by _routes
+//etag master <field_name>
+{
+  update;
+  //  delete;
+  action updateMP result [1] $self;
+  action ( features : instance ) ActiveEQ result [1] $self;
+  action ( features : instance ) InactiveEQ result [1] $self;
+//  action ( features : instance, precheck ) changeRoute parameter zicds_prd_route_field result [1] $self;
+  field ( readonly ) RouteId, FuncLoc, IsActive;
+  field ( readonly : update ) Equipment;
+  //field ( mandatory : create ) FuncLoc,Equipment;
+  validation validateEquipment on save { create; field Equipment; }
+  determination setInitialApprovals on modify { create; }
+  //  factory action copyRoute [1];//       field ( readonly : update ) RouteId, FuncLoc, Equipment;
+  association _routes;
+  association _detailsMP { create; }
+  mapping for zpm_pride_rdet_t
+  {
+    RouteId = route_id;
+    FuncLoc = func_loc;
+    Equipment = equipment;
+    LastChangeAt = last_change_at;
+    IsActive = active;
+    formula_typ = formula_typ;
+    frequency = frequency;
+    TechType = tech_type;
+    pride_desc = pride_desc;
+  }
+}
+
+define behavior for ZI_PM_PRIDE_ROUTE_MP_TEMP_M //alias <alias_name>
+implementation in class zbp_i_pm_pride_romp_t_m unique
+persistent table zpm_pride_romp_t
+lock dependent by _routes
+authorization dependent by _routes
+//etag master <field_name>
+{
+  update;
+  delete;
+
+  field ( readonly ) RouteId, FuncLoc, Equipment, MeasurePoint, Uom, HighLimit, LowLimit, Value, critical;
+  //field ( readonly ) RouteId, FuncLoc, Equipment;
+  // determination setInitialApprovals on modify { create; }
+  //  action updateMP result [1] $self;
+  action ( features : instance ) ActiveMP result [1] $self;
+  action ( features : instance ) InactiveMP result [1] $self;
+  action ( features : instance ) RequiredMP result [1] $self;
+  //  action InactiveMP result [1] $self;
+  association _routes;
+  association _details;
+  mapping for zpm_pride_romp_t
+  {
+    RouteId = route_id;
+    FuncLoc = func_loc;
+    Equipment = equipment;
+    MeasurePoint = measure_point;
+    LastChangeAt = last_change_at;
+    CDate = c_date;
+    CTime = c_time;
+    CreatedBy = created_by;
+    Uom = uom;
+    Value = value;
+    IsActive = active;
+    formula_typ = formula_typ;
+    formula_main = formula_main;
+
+  }
+}
