@@ -1,0 +1,95 @@
+FUNCTION ZPM_FM_PIGG_WORKFLOW.
+*"----------------------------------------------------------------------
+*"*"Update Function Module:
+*"
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(CAUFVD) TYPE  CAUFVD OPTIONAL
+*"----------------------------------------------------------------------
+  BREAK ac_Adnan.
+  DATA: LC_WF TYPE REF TO ZCL_PM_PRD_AND_PIGG_WF_ZMF.
+  DATA: LV_WF_ID TYPE ZPM_ROT-WF_ID.
+  DATA: LS_WF_HST TYPE ZPM_WF_HST.
+
+*****************  IMPORT CAUFVD TO GV_CAUFVD FROM MEMORY ID 'MEMORY_CAUFVD'.
+*****************  EXPORT GV_CAUFVD = GV_CAUFVD TO MEMORY ID 'MEMORY_CAUFVD'.
+*****************  SUBMIT ZPM_PRD_AND_PIGG_WF_RPT
+*****************        WITH P_AUFNR = AUFNR AND RETURN.
+
+  DATA: LV_OBJTYPE          TYPE SIBFTYPEID VALUE 'ZCL_PM_PRD_AND_PIGG_WF_ZMF',
+        LV_EVENT            TYPE SIBFEVENT VALUE 'TRIGGER',
+        LV_OBJKEY           TYPE SIBFINSTID,
+        LV_PARAM_NAME       TYPE SWFDNAME,
+        LV_ID               TYPE CHAR12,
+        LR_EVENT_PARAMETERS TYPE REF TO IF_SWF_IFS_PARAMETER_CONTAINER
+        .
+
+* Instantiate an empty event container
+  CALL METHOD CL_SWF_EVT_EVENT=>GET_EVENT_CONTAINER
+    EXPORTING
+      IM_OBJCATEG  = CL_SWF_EVT_EVENT=>MC_OBJCATEG_CL
+      IM_OBJTYPE   = LV_OBJTYPE
+      IM_EVENT     = LV_EVENT
+    RECEIVING
+      RE_REFERENCE = LR_EVENT_PARAMETERS.
+
+* Set up the name/value pair to be added to the container
+  LV_PARAM_NAME  = 'WF_KEY'.  "PARAMETER NAME OF THE EVENT
+  LV_ID          = CAUFVD-AUFNR.
+
+* Add the name/value pair to the event conainer
+  TRY.
+      CALL METHOD LR_EVENT_PARAMETERS->SET
+        EXPORTING
+          NAME  = LV_PARAM_NAME
+          VALUE = LV_ID.
+
+    CATCH CX_SWF_CNT_CONT_ACCESS_DENIED .
+    CATCH CX_SWF_CNT_ELEM_ACCESS_DENIED .
+    CATCH CX_SWF_CNT_ELEM_NOT_FOUND .
+    CATCH CX_SWF_CNT_ELEM_TYPE_CONFLICT .
+    CATCH CX_SWF_CNT_UNIT_TYPE_CONFLICT .
+    CATCH CX_SWF_CNT_ELEM_DEF_INVALID .
+    CATCH CX_SWF_CNT_CONTAINER .
+  ENDTRY.
+
+  LV_OBJKEY = CAUFVD-AUFNR.
+* Raise the event passing the prepared event container
+  TRY.
+      CALL METHOD CL_SWF_EVT_EVENT=>RAISE
+        EXPORTING
+          IM_OBJCATEG        = CL_SWF_EVT_EVENT=>MC_OBJCATEG_CL
+          IM_OBJTYPE         = LV_OBJTYPE
+          IM_EVENT           = LV_EVENT
+          IM_OBJKEY          = LV_OBJKEY
+          IM_EVENT_CONTAINER = LR_EVENT_PARAMETERS.
+    CATCH CX_SWF_EVT_INVALID_OBJTYPE .
+    CATCH CX_SWF_EVT_INVALID_EVENT .
+  ENDTRY.
+
+
+*Update CUstom Table
+  LV_WF_ID = SWITCH #( CAUFVD-AUART WHEN 'YBA4' THEN |WF-6.1|
+                                         WHEN 'YBA9' THEN |WF-6.2| ).
+
+
+  SELECT MAX( HST_ID ) FROM ZPM_WF_HST INTO @DATA(LV_HST_ID).
+  LV_HST_ID = LV_HST_ID + 1.
+
+  LS_WF_HST-HST_ID = LV_HST_ID.
+  LS_WF_HST-WF_ID = LV_WF_ID.
+  LS_WF_HST-LEVELS = '1'.
+  LS_WF_HST-AUFNR = CAUFVD-AUFNR.
+  LS_WF_HST-OBJNR = CAUFVD-OBJNR.
+  LS_WF_HST-C_STAT = 'WSCH'.
+  LS_WF_HST-ERNAM = SY-UNAME.
+  LS_WF_HST-OBJ_DATE = SY-DATUM.
+  LS_WF_HST-UZEIT = SY-UZEIT.
+  LS_WF_HST-APP_REJ = '1'.
+
+  MODIFY ZPM_WF_HST FROM LS_WF_HST.
+
+
+
+
+ENDFUNCTION.

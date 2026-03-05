@@ -1,0 +1,95 @@
+FUNCTION ZPM_FM_NOTIF_WF.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(IS_NEW_VIQMEL) TYPE  VIQMEL OPTIONAL
+*"     VALUE(I_WF_ID) TYPE  CHAR10 OPTIONAL
+*"----------------------------------------------------------------------
+  DATA: LV_OBJTYPE          TYPE SIBFTYPEID VALUE 'ZCL_PM_SET',
+        LV_EVENT            TYPE SIBFEVENT VALUE 'TRIGGER',
+        LV_OBJKEY           TYPE SIBFINSTID,
+        LV_PARAM_NAME       TYPE SWFDNAME,
+        LV_ID               TYPE CHAR14,
+        LR_EVENT_PARAMETERS TYPE REF TO IF_SWF_IFS_PARAMETER_CONTAINER,
+        LR_WF               TYPE REF TO ZCL_PM_SET,
+        LS_HST TYPE ZPM_WF_HST
+        .
+
+********* TRIGGER WORKFLOW *********
+*  CREATE OBJECT LR_WF
+*    EXPORTING
+*      WF_KEY = |{ IS_NEW_VIQMEL-QMNUM }{ IS_NEW_VIQMEL-QMART }|.
+*  CALL METHOD LR_WF->TRIGGER_WF( EXPORTING WF_KEY = |{ IS_NEW_VIQMEL-QMNUM }{ IS_NEW_VIQMEL-QMART }| ).
+
+* Instantiate an empty event container
+  CALL METHOD CL_SWF_EVT_EVENT=>GET_EVENT_CONTAINER
+    EXPORTING
+      IM_OBJCATEG  = CL_SWF_EVT_EVENT=>MC_OBJCATEG_CL
+      IM_OBJTYPE   = LV_OBJTYPE
+      IM_EVENT     = LV_EVENT
+    RECEIVING
+      RE_REFERENCE = LR_EVENT_PARAMETERS.
+
+* Set up the name/value pair to be added to the container
+  LV_PARAM_NAME  = 'WF_KEY'.  "PARAMETER NAME OF THE EVENT
+  LV_ID          = |{ IS_NEW_VIQMEL-QMNUM }{ IS_NEW_VIQMEL-QMART }|.
+
+* Add the name/value pair to the event conainer
+  TRY.
+      CALL METHOD LR_EVENT_PARAMETERS->SET
+        EXPORTING
+          NAME  = LV_PARAM_NAME
+          VALUE = LV_ID.
+
+    CATCH CX_SWF_CNT_CONT_ACCESS_DENIED .
+    CATCH CX_SWF_CNT_ELEM_ACCESS_DENIED .
+    CATCH CX_SWF_CNT_ELEM_NOT_FOUND .
+    CATCH CX_SWF_CNT_ELEM_TYPE_CONFLICT .
+    CATCH CX_SWF_CNT_UNIT_TYPE_CONFLICT .
+    CATCH CX_SWF_CNT_ELEM_DEF_INVALID .
+    CATCH CX_SWF_CNT_CONTAINER .
+  ENDTRY.
+
+  LV_OBJKEY = LV_ID.
+* Raise the event passing the prepared event container
+  TRY.
+      CALL METHOD CL_SWF_EVT_EVENT=>RAISE
+        EXPORTING
+          IM_OBJCATEG        = CL_SWF_EVT_EVENT=>MC_OBJCATEG_CL
+          IM_OBJTYPE         = LV_OBJTYPE
+          IM_EVENT           = LV_EVENT
+          IM_OBJKEY          = LV_OBJKEY
+          IM_EVENT_CONTAINER = LR_EVENT_PARAMETERS.
+  COMMIT WORK.
+    CATCH CX_SWF_EVT_INVALID_OBJTYPE .
+    CATCH CX_SWF_EVT_INVALID_EVENT .
+  ENDTRY.
+
+  "Get Detail for Routing of current level
+  SELECT SINGLE *
+    FROM ZPM_SET_V1
+    INTO @DATA(LS_SET)
+    WHERE WF_ID = @I_WF_ID
+    AND LEVELS = '1'
+    AND QMART = @IS_NEW_VIQMEL-QMART.
+
+  SELECT MAX( HST_ID ) FROM ZPM_WF_HST INTO @DATA(LV_HST_ID).
+  LV_HST_ID = LV_HST_ID + 1.
+
+  LS_HST-HST_ID = LV_HST_ID.
+  LS_HST-WF_ID = I_WF_ID.
+  LS_HST-LEVELS = '1'.
+  LS_HST-QMNUM = IS_NEW_VIQMEL-QMNUM.
+  LS_HST-AUFNR = IS_NEW_VIQMEL-AUFNR.
+  LS_HST-OBJNR = IS_NEW_VIQMEL-OBJNR.
+  LS_HST-C_STAT = LS_SET-LSTAT.
+  LS_HST-ERNAM = SY-UNAME.
+  LS_HST-OBJ_DATE = SY-DATUM.
+  LS_HST-UZEIT = SY-UZEIT.
+  LS_HST-APP_REJ = '1'.
+
+  MODIFY ZPM_WF_HST FROM LS_HST.
+
+*  MESSAGE 'Workflow is working' TYPE 'I'.
+
+ENDFUNCTION.

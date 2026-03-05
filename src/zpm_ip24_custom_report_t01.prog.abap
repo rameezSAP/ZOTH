@@ -1,0 +1,115 @@
+*&---------------------------------------------------------------------*
+*& Include          ZFI_VOID_CHECK_REGISTER_T01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*& Include          ZFI_VOID_CHECK_REGISTER_T01
+*&---------------------------------------------------------------------*
+*DATA:GT_MAIN TYPE STANDARD TABLE OF  RIHAUFK_LIST.
+
+
+*DATA:GT_MAIN TYPE STANDARD TABLE OF RIHMHIO.
+
+TYPES: BEGIN OF TY_MAIN,
+         WAPOS         TYPE RIHMHIO-WAPOS,
+         WARPL         TYPE RIHMHIO-WARPL,
+         WSTRA         TYPE RIHMHIO-WSTRA,
+         WPPOS         TYPE RIHMHIO-WPPOS,
+         PSTXT         TYPE RIHMHIO-PSTXT,
+         EQUNR         TYPE RIHMHIO-EQUNR,
+         IND_ABRVO     TYPE RIHMHIO-IND_ABRVO,
+         OBKNR         TYPE RIHMHIO-OBKNR,
+         ERNAM         TYPE RIHMHIO-ERNAM,
+         ERSDT         TYPE RIHMHIO-ERSDT,
+         AEDAT         TYPE RIHMHIO-AEDAT,
+         AENAM         TYPE RIHMHIO-AENAM,
+         PLNTY         TYPE RIHMHIO-PLNTY,
+         PLNNR         TYPE RIHMHIO-PLNNR,
+         PLNAL         TYPE RIHMHIO-PLNAL,
+         STATUS        TYPE RIHMHIO-STATUS,
+         LTKNZ         TYPE RIHMHIO-LTKNZ,
+         WPGRP         TYPE RIHMHIO-WPGRP,
+         GEWRK         TYPE RIHMHIO-GEWRK,
+         IWERK         TYPE RIHMHIO-IWERK,
+         LANGU         TYPE RIHMHIO-LANGU,
+         ILOAN         TYPE RIHMHIO-ILOAN,
+         LAUFN         TYPE RIHMHIO-LAUFN,
+         BAUTL         TYPE RIHMHIO-BAUTL,
+         AUART         TYPE RIHMHIO-AUART,
+         ILART         TYPE RIHMHIO-ILART,
+         GSBER         TYPE RIHMHIO-GSBER,
+         TPLNR         TYPE RIHMHIO-TPLNR,
+         ABCKZ         TYPE RIHMHIO-ABCKZ,
+         EQFNR         TYPE RIHMHIO-EQFNR,
+         SWERK         TYPE RIHMHIO-SWERK,
+         STORT         TYPE RIHMHIO-STORT,
+         MSGRP         TYPE RIHMHIO-MSGRP,
+         BEBER         TYPE RIHMHIO-BEBER,
+         KOKRS         TYPE RIHMHIO-KOKRS,
+         KOSTL         TYPE RIHMHIO-KOSTL,
+         BUKRS         TYPE RIHMHIO-BUKRS,
+         ANLNR         TYPE RIHMHIO-ANLNR,
+         ANLUN         TYPE RIHMHIO-ANLUN,
+         DAUFN         TYPE RIHMHIO-DAUFN,
+         PSPEL         TYPE RIHMHIO-PSPEL,
+         ARBPL         TYPE RIHMHIO-ARBPL,
+         KDAUF         TYPE RIHMHIO-KDAUF,
+         KDPOS         TYPE RIHMHIO-KDPOS,
+         VKORG         TYPE RIHMHIO-VKORG,
+         VTWEG         TYPE RIHMHIO-VTWEG,
+         SPART         TYPE RIHMHIO-SPART,
+         EQKTX         TYPE RIHMHIO-EQKTX,
+         PLTXT         TYPE RIHMHIO-PLTXT,
+         ABNUM         TYPE RIHMHIO-ABNUM,
+         AUFNR         TYPE RIHMHIO-AUFNR,
+         ADDAT         TYPE RIHMHIO-ADDAT,
+         LBLNI         TYPE RIHMHIO-LBLNI,
+         TSENQ         TYPE RIHMHIO-TSENQ,
+         TSTAT         TYPE RIHMHIO-TSTAT,
+         GSTRP         TYPE RIHMHIO-GSTRP,
+         BSTNR         TYPE RIHMHIO-BSTNR,
+         BSTPO         TYPE RIHMHIO-BSTPO,
+         SERIALNR      TYPE RIHMHIO-SERIALNR,
+         SERMAT        TYPE RIHMHIO-SERMAT,
+         QMNUM         TYPE RIHMHIO-QMNUM,
+         QMART         TYPE RIHMHIO-QMART,
+         GSTRP_INT     TYPE RIHMHIO-GSTRP_INT,
+         NPLDA_INT     TYPE RIHMHIO-NPLDA_INT,
+         PLAN_SORT     TYPE RIHMHIO-PLAN_SORT,
+         PLAN_SORT_TXT TYPE RIHMHIO-PLAN_SORT_TXT,
+         PHYNR         TYPE RIHMHIO-PHYNR,
+         ART           TYPE RIHMHIO-ART,
+         PRUEFLOS      TYPE RIHMHIO-PRUEFLOS,
+         STADT         TYPE MHIS-STADT,
+         ZYKL1         TYPE MMPT-ZYKL1,
+         ZEIEH         TYPE MMPT-ZEIEH,
+         WPTXT         TYPE MPLA-WPTXT,
+*         WARPL         TYPE MPLA-WARPL,
+       END OF TY_MAIN.
+*DATA:GT_MAIN TYPE STANDARD TABLE OF RIHMHIO,
+*DATA:GT_MAIN TYPE STANDARD TABLE OF TY_MAIN,
+DATA:GT_MAIN TYPE STANDARD TABLE OF ZRIHMHIO_IP24,
+     GS_MAIN LIKE LINE OF GT_MAIN.
+*Dynamic Call
+DATA:    LS_DATA TYPE REF TO DATA.
+DATA: GV_FLAG TYPE CHAR1..
+FIELD-SYMBOLS: <LT_DATA> TYPE ANY TABLE.
+
+DATA:REPORT_DATE TYPE DATS,
+     PERIOD_FROM TYPE DATS,
+     PERIOD_TO   TYPE DATS,
+     BANKA       TYPE BNKA-BANKA,
+     BANKN       TYPE T012K-BANKN,
+     BRNCH       TYPE BNKA-BRNCH,
+     WAERS       TYPE T012K-WAERS,
+     TOTAL       TYPE FAGL_CURRVAL_10.
+
+*For ALV
+DATA: IT_FIELDCAT TYPE LVC_T_FCAT,
+      LS_FIELDCAT TYPE LVC_S_FCAT.
+DATA:V_FIELDNAME TYPE FIELDNAME,
+     V_SELTEXT   TYPE SCRTEXT_L,
+     LR_DATA     TYPE REF TO DATA,
+     LR_TABDESCR TYPE REF TO CL_ABAP_STRUCTDESCR,
+     LT_DFIES    TYPE DDFIELDS,
+     LS_DFIES    TYPE DFIES,
+     LS_VARIANT  TYPE DISVARIANT...

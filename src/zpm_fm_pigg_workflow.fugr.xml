@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>PM:Pigging Workflow Order Workflow</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZPM_FM_PIGG_WORKFLOWTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZPM_FM_PIGG_WORKFLOW</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZPM_FM_PIGG_WORKFLOW</FUNCNAME>
+     <UPDATE_TASK>1</UPDATE_TASK>
+     <SHORT_TEXT>PM:Pigging Woklfow FM</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>CAUFVD</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>CAUFVD</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>CAUFVD</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Order Number</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

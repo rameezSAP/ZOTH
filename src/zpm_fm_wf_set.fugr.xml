@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>PM: WF Setting</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZPM_FM_WF_SETTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZPM_FM_WF_SET</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZPM_FM_CHECK_WF_SETTING</FUNCNAME>
+     <SHORT_TEXT>PM: Check Workflow Setting</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>WF_ID</PARAMETER>
+       <TYP>ZWF_ID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>QMNUM</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>QMNUM</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>AUFNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>AUFNR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>USER</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>SY-UNAME</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>RTYPE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>SY-MSGTY</TYP>
+      </RSEXP>
+      <RSEXP>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>CHAR255</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>WF_ID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Workflow ID</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>QMNUM</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Notification Number</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>AUFNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Order Number</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>USER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>ABAP System Field: Name of Current User</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>RTYPE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>ABAP System Field: Message Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Char255</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>ZPM_FM_CHECK_WF_SETTING_ALL</FUNCNAME>
+     <SHORT_TEXT>PM: Check Workflow Setting</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>WF_ID</PARAMETER>
+       <TYP>ZWF_ID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>USER</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>SY-UNAME</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>VIQMEL</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>VIQMEL</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>RTYPE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>SY-MSGTY</TYP>
+      </RSEXP>
+      <RSEXP>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>CHAR255</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>WF_ID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Workflow ID</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>USER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>ABAP System Field: Name of Current User</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>VIQMEL</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Generated Table for View</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>RTYPE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>ABAP System Field: Message Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Char255</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>ZPM_FM_CHECK_WF_SETTING_ORDER</FUNCNAME>
+     <SHORT_TEXT>PM: Check Workflow Setting</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>WF_ID</PARAMETER>
+       <TYP>ZWF_ID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>CAUFVD</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>CAUFVD</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>RTYPE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>SY-MSGTY</TYP>
+      </RSEXP>
+      <RSEXP>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>CHAR255</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>WF_ID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Workflow ID</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>CAUFVD</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Generated Table for View</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>RTYPE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>ABAP System Field: Message Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>MESSAGE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Char255</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

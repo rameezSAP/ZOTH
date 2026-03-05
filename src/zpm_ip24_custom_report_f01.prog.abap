@@ -1,0 +1,493 @@
+*&---------------------------------------------------------------------*
+*& Include          ZFI_VOID_CHECK_REGISTER_F01
+*&---------------------------------------------------------------------*
+FORM GET_DATA.
+*--Step insert
+*Restrict showing alv
+  CL_SALV_BS_RUNTIME_INFO=>SET( EXPORTING DISPLAY  = ABAP_FALSE
+                                          METADATA = ABAP_FALSE
+                                          DATA     = ABAP_TRUE ).
+
+* Insert process into job
+  SUBMIT RIMHIO00
+      WITH MITYP    IN MITYP
+      WITH PLANSORT IN PLANSORT
+      WITH WARPL    IN WARPL
+      WITH WAPOS    IN WAPOS
+      WITH WSTRA    IN WSTRA
+      WITH PSTXT    IN PSTXT
+      WITH TPLNR    IN TPLNR
+      WITH STRNO    IN STRNO
+      WITH EQUNR    IN EQUNR
+      WITH BAUTL    IN BAUTL
+      WITH SERMAT   IN SERMAT
+      WITH SERIALNR IN SERIALNR
+      WITH ABREA   EQ ABREA
+      WITH ABREM   EQ ABREM
+      WITH ABREO   EQ ABREO
+      WITH OBLIS   EQ OBLIS
+      WITH AUFNR  IN AUFNR
+      WITH QMNUM  IN QMNUM
+      WITH LBLNI  IN LBLNI
+      WITH GSTRP  IN GSTRP
+      WITH ADDAT  IN ADDAT
+      WITH TSTAT  IN TSTAT
+      WITH TSTAA  EQ TSTAA
+      WITH TSTAM  EQ TSTAM
+      WITH TSTAO  EQ TSTAO
+      WITH SPERRE EQ SPERRE
+      WITH IWERK   IN IWERK
+      WITH WPGRP   IN WPGRP
+      WITH GSBER   IN GSBER
+      WITH AUART   IN AUART
+      WITH QMART   IN QMART
+      WITH ILART   IN ILART
+      WITH GEWRK   IN GEWRK
+      WITH PLNTY   IN PLNTY
+      WITH PLNNR   IN PLNNR
+      WITH PLNAL   IN PLNAL
+      WITH BSTNR   IN BSTNR
+      WITH BSTPO   IN BSTPO
+      WITH SWERK   IN SWERK
+      WITH STORT   IN STORT
+      WITH MSGRP   IN MSGRP
+      WITH BEBER   IN BEBER
+      WITH ARBPL   IN ARBPL
+      WITH ABCKZ   IN ABCKZ
+      WITH EQFNR   IN EQFNR
+      WITH BUKRS   IN BUKRS
+      WITH ANLNR   IN ANLNR
+      WITH ANLUN   IN ANLUN
+      WITH KOKRS   IN KOKRS
+      WITH KOSTL   IN KOSTL
+      WITH PSPEL   IN PSPEL
+      WITH DAUFN   IN DAUFN
+      WITH KDAUF   IN KDAUF
+      WITH KDPOS   IN KDPOS
+      WITH VKORG   IN VKORG
+      WITH VTWEG   IN VTWEG
+      WITH SPART   IN SPART
+      WITH ERNAM   IN ERNAM
+      WITH ERSDT   IN ERSDT
+      WITH AENAM   IN AENAM
+      WITH AEDAT   IN AEDAT
+      WITH VARIANT   EQ VARIANT
+      WITH DY_SELM   EQ DY_SELM
+      WITH DY_MODE   EQ DY_MODE
+      WITH DY_TCODE  EQ DY_TCODE
+    AND RETURN.
+*  CATCH cx_root INTO oref.
+*ENDTRY.
+  TRY.
+*      CLEAR GV_FLAG.
+      CL_SALV_BS_RUNTIME_INFO=>GET_DATA_REF(
+        IMPORTING
+          R_DATA = LS_DATA ).
+      ASSIGN LS_DATA->* TO <LT_DATA>.
+      IF <LT_DATA> IS ASSIGNED.
+        DATA : L_VAR1 TYPE STRING.
+        FIELD-SYMBOLS : <FS> TYPE ANY .
+        MOVE-CORRESPONDING <LT_DATA> TO GT_MAIN[]..
+
+
+      ELSE.
+        MESSAGE 'No Data Found!' TYPE 'E'.
+      ENDIF.
+    CATCH CX_SALV_BS_SC_RUNTIME_INFO.
+      MESSAGE `Unable to retrieve ALV data` TYPE 'E'.
+  ENDTRY.
+
+
+  IF GT_MAIN IS NOT INITIAL.
+
+*For PM PM Frequency
+    SELECT
+      WARPL,
+      NUMMER,
+      ZYKL1,
+      ZEIEH
+      FROM MMPT
+      INTO TABLE @DATA(LT_MMPT)
+      FOR ALL ENTRIES IN @GT_MAIN
+      WHERE WARPL  = @GT_MAIN-WARPL.
+*            AND NUMMER = @GT_MAIN-PLNAL.
+    SORT LT_MMPT BY WARPL NUMMER ASCENDING.
+
+*PM First Start Date
+    SELECT
+          WARPL,
+          ABNUM,
+          ZAEHL,
+          STADT
+          FROM MHIS
+          INTO TABLE @DATA(LT_MHIS)
+          FOR ALL ENTRIES IN @GT_MAIN
+          WHERE WARPL  = @GT_MAIN-WARPL
+                AND ABNUM = @GT_MAIN-ABNUM.
+    SORT LT_MHIS BY WARPL ABNUM ZAEHL ASCENDING.
+
+*PM Maintenance plan
+    SELECT
+          WARPL,
+          WPTXT
+          FROM MPLA
+          INTO TABLE @DATA(LT_MPLA)
+          FOR ALL ENTRIES IN @GT_MAIN
+          WHERE WARPL  = @GT_MAIN-WARPL.
+
+    SORT LT_MPLA BY WARPL ASCENDING.
+
+    SELECT * FROM MHIO INTO TABLE @DATA(LT_MHIO)
+      FOR ALL ENTRIES IN @GT_MAIN
+      WHERE WARPL  = @GT_MAIN-WARPL
+      AND ABNUM LT 90000000.
+
+    SORT LT_MHIO ASCENDING BY WARPL ABNUM.
+
+    SELECT AUFNR, ADDAT FROM AFIH INTO TABLE @DATA(LT_AFIH)
+      FOR ALL ENTRIES IN @GT_MAIN
+      WHERE AUFNR = @GT_MAIN-AUFNR.
+
+    SORT LT_AFIH ASCENDING BY AUFNR.
+
+    SELECT QMNUM, BEZDT FROM VIQMEL INTO TABLE @DATA(LT_VIQMEL)
+     FOR ALL ENTRIES IN @GT_MAIN
+     WHERE QMNUM = @GT_MAIN-QMNUM.
+
+    SORT LT_VIQMEL ASCENDING BY QMNUM.
+
+    SELECT B~WARPL, A~KTEXT INTO TABLE @DATA(LT_PLKO)
+      FROM PLKO AS A
+      INNER JOIN MPOS AS B ON ( B~PLNTY = A~PLNTY AND B~PLNNR = A~PLNNR AND B~PLNAL = A~PLNAL )
+      FOR ALL ENTRIES IN @GT_MAIN
+      WHERE WARPL = @GT_MAIN-WARPL.
+
+    SORT LT_PLKO ASCENDING BY WARPL.
+
+
+    SELECT * FROM CRHD
+      INTO TABLE @DATA(LT_CRHD)
+      FOR ALL ENTRIES IN @GT_MAIN
+      WHERE OBJTY = 'A'
+      AND ENDDA = '99991231'
+      AND WERKS = @GT_MAIN-SWERK.
+*      AND OBJID = @GT_MAIN-GEWRK.
+
+    SORT LT_CRHD ASCENDING BY OBJID.
+  ENDIF.
+
+  DATA:LV_NUMBER TYPE N LENGTH 2.
+  LOOP AT GT_MAIN ASSIGNING FIELD-SYMBOL(<FS_UPDATE>).
+
+*For Frequency
+    LV_NUMBER = <FS_UPDATE>-PLNAL.
+    DATA: LT_CYCLES                TYPE STANDARD TABLE OF MPLAN_MMPT.
+    CALL FUNCTION 'MPLAN_READ'
+      EXPORTING
+        MPLAN  = <FS_UPDATE>-WARPL
+      TABLES
+        CYCLES = LT_CYCLES.
+
+    READ TABLE LT_CYCLES INTO DATA(LS_MMPT) WITH KEY WARPL = <FS_UPDATE>-WARPL
+    NUMMER = LV_NUMBER
+    BINARY SEARCH.
+    IF SY-SUBRC = 0.
+
+      CALL FUNCTION 'MC_FLTP_CHAR'
+        EXPORTING
+          FC_A_FLD = LS_MMPT-ZYKL1
+        IMPORTING
+          FC_R_FLD = <FS_UPDATE>-ZYKL1.
+      CONDENSE <FS_UPDATE>-ZYKL1.
+
+
+      CALL FUNCTION 'CONVERSION_EXIT_CUNIT_OUTPUT'
+        EXPORTING
+          INPUT          = LS_MMPT-ZEIEH
+          LANGUAGE       = SY-LANGU
+        IMPORTING
+*         LONG_TEXT      = LONG_TEXT
+          OUTPUT         = <FS_UPDATE>-ZEIEH
+*         SHORT_TEXT     = SHORT_TEXT
+        EXCEPTIONS
+          UNIT_NOT_FOUND = 1.
+
+    ENDIF.
+    CLEAR LV_NUMBER.
+
+    LV_NUMBER = <FS_UPDATE>-PLNAL.
+    READ TABLE LT_MHIS INTO DATA(LS_MHIS) WITH KEY WARPL = <FS_UPDATE>-WARPL
+    ABNUM = <FS_UPDATE>-ABNUM
+    ZAEHL = LV_NUMBER
+    BINARY SEARCH.
+    IF SY-SUBRC = 0.
+      <FS_UPDATE>-STADT = LS_MHIS-STADT.
+    ENDIF.
+    CLEAR LV_NUMBER.
+
+*Maintaince Plan
+
+    READ TABLE LT_MPLA INTO DATA(LS_MPLA) WITH KEY WARPL = <FS_UPDATE>-WARPL
+    BINARY SEARCH .
+    IF SY-SUBRC = 0.
+      <FS_UPDATE>-WPTXT = LS_MPLA-WPTXT.
+    ENDIF.
+    DATA: LV_NEXT_DATA(1)." TYPE SY-TABIX.
+    CLEAR: LV_NEXT_DATA.
+    LOOP AT LT_MHIO INTO DATA(LS_MHIO) WHERE WARPL = <FS_UPDATE>-WARPL AND ABNUM = <FS_UPDATE>-ABNUM.
+      "  IF LV_NEXT_DATA = 'X'.
+      <FS_UPDATE>-NEXT_PM_DATE = LS_MHIO-GSTRP.
+      "     CLEAR: LV_NEXT_DATA.
+      "   ENDIF.
+      "   IF LS_MHIO-AUFNR IS NOT INITIAL OR LS_MHIO-QMNUM IS NOT INITIAL.
+      "     LV_NEXT_DATA = 'X'.
+      "    ENDIF.
+    ENDLOOP.
+
+    READ TABLE LT_AFIH INTO DATA(LS_AFIH) WITH KEY AUFNR = <FS_UPDATE>-AUFNR
+    BINARY SEARCH .
+    IF SY-SUBRC = 0.
+      <FS_UPDATE>-LAST_PM_DATE = LS_AFIH-ADDAT.
+    ENDIF.
+
+    IF <FS_UPDATE>-LAST_PM_DATE IS INITIAL.
+      READ TABLE LT_VIQMEL INTO DATA(LS_VIQMEL) WITH KEY QMNUM = <FS_UPDATE>-QMNUM
+      BINARY SEARCH .
+      IF SY-SUBRC = 0.
+        <FS_UPDATE>-LAST_PM_DATE = LS_VIQMEL-BEZDT.
+      ENDIF.
+    ENDIF.
+    CLEAR: <FS_UPDATE>-WPTXT.
+
+    READ TABLE LT_PLKO INTO DATA(LS_PLKO) WITH KEY WARPL = <FS_UPDATE>-WARPL
+    BINARY SEARCH .
+    IF SY-SUBRC = 0.
+      <FS_UPDATE>-WPTXT = LS_PLKO-KTEXT.
+    ENDIF.
+
+
+    READ TABLE LT_CRHD INTO DATA(LS_CRHD) WITH KEY OBJID = <FS_UPDATE>-GEWRK
+    BINARY SEARCH .
+    IF SY-SUBRC = 0.
+      <FS_UPDATE>-ARBPL = LS_CRHD-ARBPL.
+    ENDIF.
+
+
+
+
+
+    CLEAR: LV_NUMBER,LS_MPLA,LS_MHIS,LS_MMPT.
+*    UNASSIGN:<FS_UPDATE>.
+  ENDLOOP.
+
+
+*Restrict showing alv
+  CL_SALV_BS_RUNTIME_INFO=>SET( EXPORTING DISPLAY  = ABAP_TRUE
+                                          METADATA = ABAP_TRUE
+                                          DATA     = ABAP_TRUE ).
+
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*& Include          ZFI_VOID_CHECK_REGISTER_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  SET_OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+
+FORM SET_OUTPUT .
+  CLEAR IT_FIELDCAT.
+  CREATE DATA LR_DATA LIKE LINE OF GT_MAIN.
+
+*Create Field Cathlog From Internal Table
+  LR_TABDESCR ?= CL_ABAP_STRUCTDESCR=>DESCRIBE_BY_DATA_REF( LR_DATA ).
+
+  LT_DFIES = CL_SALV_DATA_DESCR=>READ_STRUCTDESCR( LR_TABDESCR ).
+
+  LOOP AT LT_DFIES INTO LS_DFIES.
+    CLEAR LS_FIELDCAT.
+    MOVE-CORRESPONDING LS_DFIES TO LS_FIELDCAT.
+    LS_FIELDCAT-REPTEXT   = LS_DFIES-FIELDTEXT.
+    LS_FIELDCAT-SCRTEXT_S = LS_DFIES-FIELDTEXT.
+    LS_FIELDCAT-SCRTEXT_L = LS_DFIES-FIELDTEXT.
+    LS_FIELDCAT-SCRTEXT_M = LS_DFIES-FIELDTEXT.
+    IF LS_DFIES-FIELDNAME = 'DATBW'.
+      LS_FIELDCAT-REPTEXT      = 'Loan Date'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Loan Date'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Loan Date'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Loan Date'.
+      LS_FIELDCAT-DO_SUM = 'X'.
+    ELSEIF LS_DFIES-FIELDNAME = 'TOTAL_INS'.
+      LS_FIELDCAT-REPTEXT      = 'Total Installments'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Total Installments'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Total Installments'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Total Installments'.
+    ELSEIF LS_DFIES-FIELDNAME = 'DARBT'.
+      LS_FIELDCAT-REPTEXT      = 'Loan Amount'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Loan Amount'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Loan Amount'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Loan Amount'.
+    ELSEIF LS_DFIES-FIELDNAME = 'TILBT'.
+      LS_FIELDCAT-REPTEXT      = 'Installment Amount'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Installment Amount'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Installment Amount'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Installment Amount'.
+    ELSEIF LS_DFIES-FIELDNAME = 'BAL_AMT'.
+      LS_FIELDCAT-REPTEXT      = 'Balance Amount'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Balance Amount'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Balance Amount'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Balance Amount'.
+    ELSEIF LS_DFIES-FIELDNAME = 'BAL_INS'.
+      LS_FIELDCAT-REPTEXT      = 'Remaining Installments'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Remaining Installments'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Remaining Installments'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Remaining Installments'.
+    ELSEIF LS_DFIES-FIELDNAME = 'NAME'.
+      LS_FIELDCAT-REPTEXT      = 'Name'.
+      LS_FIELDCAT-SCRTEXT_S    = 'Name'.
+      LS_FIELDCAT-SCRTEXT_L    = 'Name'.
+      LS_FIELDCAT-SCRTEXT_M    = 'Name'.
+    ELSEIF LS_DFIES-FIELDNAME = 'PSTXT'.
+      LS_FIELDCAT-REPTEXT      = 'PM Description'.
+      LS_FIELDCAT-SCRTEXT_S    = 'PM Description'.
+      LS_FIELDCAT-SCRTEXT_L    = 'PM Description'.
+      LS_FIELDCAT-SCRTEXT_M    = 'PM Description'.
+    ELSEIF LS_DFIES-FIELDNAME = 'WARPL'.
+      LS_FIELDCAT-REPTEXT      = 'PM Tag'.
+      LS_FIELDCAT-SCRTEXT_S    = 'PM Tag'.
+      LS_FIELDCAT-SCRTEXT_L    = 'PM Tag'.
+      LS_FIELDCAT-SCRTEXT_M    = 'PM Tag'.
+    ENDIF.
+
+
+    DATA LV_LENGTH TYPE I .
+    IF LS_DFIES-FIELDTEXT IS INITIAL.
+      LV_LENGTH = STRLEN( LS_FIELDCAT-REPTEXT ).
+    ELSE.
+      LV_LENGTH = STRLEN( LS_DFIES-FIELDTEXT ).
+    ENDIF.
+    LS_FIELDCAT-OUTPUTLEN = LV_LENGTH.
+    IF LS_FIELDCAT-FIELDNAME = 'SEL'.
+      LS_FIELDCAT-OUTPUTLEN = 1.
+    ENDIF.
+
+    APPEND LS_FIELDCAT TO IT_FIELDCAT.
+    CLEAR: LS_FIELDCAT,LS_DFIES.
+  ENDLOOP.
+  DELETE IT_FIELDCAT WHERE FIELDNAME = 'SEL'.
+  DATA:GD_LAYOUT  TYPE  LVC_S_LAYO.
+  GD_LAYOUT-BOX_FNAME     = 'SEL'.
+  "set field name to store row selection
+*  GD_LAYOUT-EDIT              = 'X'. "makes whole ALV table editable
+*  GD_LAYOUT-ZEBRA             = 'X'.
+
+
+*Display ALV Report
+  CONSTANTS LC_SAVE_ALL TYPE C VALUE 'A'.
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY_LVC'
+    EXPORTING
+      I_CALLBACK_PROGRAM       = SY-REPID
+      I_CALLBACK_USER_COMMAND  = 'USER_COMMAND'   "see FORM
+      I_CALLBACK_TOP_OF_PAGE   = 'TOP_OF_PAGE'
+      IT_FIELDCAT_LVC          = IT_FIELDCAT[]
+      IS_LAYOUT_LVC            = GD_LAYOUT
+      I_SAVE                   = LC_SAVE_ALL
+      I_CALLBACK_PF_STATUS_SET = 'PFSTAT'
+*     IS_VARIANT               = GX_VARIANT
+   "  IT_SORT_LVC              = IT_SORT
+    TABLES
+      T_OUTTAB                 = GT_MAIN "Global Table for output
+    EXCEPTIONS
+      PROGRAM_ERROR            = 1
+      OTHERS                   = 2.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+
+  ENDIF.
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*&      Form  TOP_OF_PAGE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM TOP_OF_PAGE.
+
+  DATA: LT_HEADER TYPE SLIS_T_LISTHEADER,
+        LS_HEADER TYPE SLIS_LISTHEADER.
+
+* Set Header in the ALV
+  LS_HEADER-TYP  = 'H'.                                                                 "#EC-NOTEXT
+  LS_HEADER-INFO = TEXT-001.
+  APPEND LS_HEADER TO LT_HEADER.
+  CLEAR LS_HEADER.
+
+  LS_HEADER-TYP  = 'S'.
+  LS_HEADER-KEY  = TEXT-002.
+  LS_HEADER-INFO = SY-DATUM+6(2) && '.' && SY-DATUM+4(2) && '.' && SY-DATUM+0(4).
+  APPEND LS_HEADER TO LT_HEADER.
+  CLEAR LS_HEADER.
+
+
+* Set List Comment Output
+  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+    EXPORTING
+      IT_LIST_COMMENTARY = LT_HEADER.
+
+  CLEAR: LS_HEADER, LT_HEADER[].
+
+ENDFORM.
+FORM PFSTAT USING P_EXTAB TYPE SLIS_T_EXTAB.
+
+*- Pf status
+  SET PF-STATUS 'ZMAIN'.
+  "it is having all you want
+ENDFORM.
+FORM USER_COMMAND USING R_UCOMM LIKE SY-UCOMM
+                  RS_SELFIELD TYPE SLIS_SELFIELD.
+* Check function code
+
+  RS_SELFIELD-REFRESH = 'X' .
+  DATA REF1 TYPE REF TO CL_GUI_ALV_GRID.
+
+  CALL FUNCTION 'GET_GLOBALS_FROM_SLVC_FULLSCR'
+    IMPORTING
+      E_GRID = REF1.
+
+  CALL METHOD REF1->CHECK_CHANGED_DATA.
+  .
+  CASE R_UCOMM.
+    WHEN '&IC1'.
+    WHEN 'WSEL'.
+
+      LOOP AT GT_MAIN INTO DATA(LS_SEL) WHERE SEL = 'X'.
+*        READ TABLE GT_MAIN INDEX RS_SELFIELD-TABINDEX INTO DATA(WA_WSEL).
+
+        RANGES: I_WARPL  FOR GS_MAIN-WARPL.
+        I_WARPL-OPTION = 'EQ'.
+        I_WARPL-SIGN   = 'I'.
+        I_WARPL-LOW    = LS_SEL-WARPL.
+        COLLECT I_WARPL.
+
+      ENDLOOP.
+
+      SUBMIT RIMPLA00 WITH WARPL IN I_WARPL
+                          WITH DY_TCODE = 'IP16'
+                 AND RETURN.
+
+    WHEN 'WPOS'.
+      READ TABLE GT_MAIN INDEX RS_SELFIELD-TABINDEX INTO DATA(WA).
+*      IF RS_SELFIELD-FIELDNAME = 'ORDERID'.
+      SET PARAMETER ID 'MPL' FIELD WA-WARPL.
+      CALL TRANSACTION 'IP03' AND SKIP FIRST SCREEN.
+*      ENDIF.
+
+
+
+  ENDCASE.
+ENDFORM.

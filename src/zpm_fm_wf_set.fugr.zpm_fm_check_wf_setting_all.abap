@@ -1,0 +1,167 @@
+FUNCTION ZPM_FM_CHECK_WF_SETTING_ALL.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(WF_ID) TYPE  ZWF_ID
+*"     VALUE(USER) TYPE  SY-UNAME OPTIONAL
+*"     VALUE(VIQMEL) TYPE  VIQMEL OPTIONAL
+*"  EXPORTING
+*"     REFERENCE(RTYPE) TYPE  SY-MSGTY
+*"     REFERENCE(MESSAGE) TYPE  CHAR255
+*"----------------------------------------------------------------------
+
+  TYPES: BEGIN OF TY_AGENT,
+           ZAGENT TYPE ZAGENT,
+         END OF TY_AGENT.
+  TYPES: BEGIN OF TY_STR,
+           USRID     TYPE CHAR50,
+           PLANS     TYPE PLANS,
+           SOBID     TYPE SOBID,
+           SUP_USRID TYPE CHAR12,
+         END OF TY_STR.
+
+  DATA: LT_AGENTS    TYPE STANDARD TABLE OF TY_AGENT,
+        LS_AGENTS    LIKE LINE OF LT_AGENTS,
+        LT_RETURN    TYPE TABLE OF BAPIRET2,
+        LS_WF_NEX    TYPE ZPM_WF_NEX,
+        LV_PRE_LEVEL TYPE ZLEVEL,
+        LV_USER      TYPE BAPIBNAME-BAPIBNAME,
+        LT_SOBID     TYPE STANDARD TABLE OF TY_STR,
+        LS_SOBID     LIKE LINE OF LT_SOBID,
+        IM_LEVEL     TYPE ZLEVEL.
+
+  "IN CASE OF WF-3 with level 5 or 6 this will be 'X'
+  IF WF_ID EQ 'WF-3' AND ( IM_LEVEL EQ 5 OR IM_LEVEL EQ 6 ) AND VIQMEL-INGRP = VIQMEL-ARBPL(3)..
+    DATA(LV_FLAG) = 'X'.
+  ELSE.
+    CLEAR LV_FLAG.
+  ENDIF.
+
+
+*--- Setting Table of Workflow ---*
+  SELECT * FROM ZPM_SET_V1 INTO TABLE @DATA(LT_SET)
+    WHERE WF_ID = @WF_ID.
+  SORT LT_SET ASCENDING BY LEVELS.
+
+  LOOP AT LT_SET INTO DATA(LS_SET) WHERE LEVELS <> 1.
+
+    FREE: LT_AGENTS, LS_AGENTS.
+    IF LS_SET-WF_DET_KEY = 'AR'.
+
+      SELECT SINGLE PERNR FROM PA0105 INTO @DATA(LV_PERNR)
+         WHERE USRID = @USER
+         AND USRTY = '0001'
+         AND ENDDA = '99991231'.
+      IF SY-SUBRC EQ 0.
+        SELECT SINGLE PLANS FROM PA0001 INTO @DATA(LV_PLANS)
+          WHERE PERNR = @LV_PERNR
+          AND ENDDA = '99991231'.
+
+*        SELECT SINGLE SOBID FROM HRP1001 INTO @DATA(LV_SOBID)
+        SELECT SOBID AS SOBID FROM HRP1001 INTO CORRESPONDING FIELDS OF TABLE LT_SOBID
+          WHERE OBJID = LV_PLANS
+          AND OTYPE = 'S'
+          AND SCLAS = 'S'
+          AND ( SUBTY = 'A002' OR SUBTY = 'A005' )
+          AND ENDDA = '99991231'.
+        IF SY-SUBRC = 0.
+
+          LOOP AT LT_SOBID INTO LS_SOBID.
+            CLEAR: LV_PERNR.
+            SELECT PERNR AS PERNR FROM PA0001 INTO TABLE @DATA(LT_PERNR)
+              WHERE PLANS = @LS_SOBID-SOBID
+              AND ENDDA = '99991231'.
+
+            LOOP AT LT_PERNR INTO DATA(LS_PERNR).
+              SELECT SINGLE USRID FROM PA0105 INTO @DATA(LV_USRID)
+                WHERE PERNR = @LS_PERNR-PERNR
+                AND ENDDA = '99991231'
+                AND USRTY = '0001'.
+
+              LS_AGENTS-ZAGENT = LV_USRID.
+              APPEND LS_AGENTS TO LT_AGENTS.
+
+              CLEAR: LV_USRID, LS_PERNR, LS_AGENTS.
+            ENDLOOP.
+            CLEAR: LS_SOBID.
+          ENDLOOP.
+        ENDIF.
+
+      ELSE. "if Pernr not found against the SAP user
+
+*----- Incase Position to Position heirarchy not maintain ----*
+        SELECT ZPOSITION AS SOBID, ZSUP_ID AS SUP_USRID FROM ZSUBCOEMP INTO CORRESPONDING FIELDS OF TABLE @LT_SOBID
+          WHERE ZSAP_ID = @USER.
+        IF SY-SUBRC = 0.
+
+          LOOP AT LT_SOBID INTO LS_SOBID.
+            IF LS_SOBID-SOBID IS NOT INITIAL AND LS_SOBID-SOBID ne '00000000'.
+              CLEAR: LV_PERNR.
+              SELECT PERNR AS PERNR FROM PA0001 INTO TABLE LT_PERNR
+                WHERE PLANS = LS_SOBID-SOBID
+                AND ENDDA = '99991231'.
+
+              LOOP AT LT_PERNR INTO LS_PERNR.
+                SELECT SINGLE USRID FROM PA0105 INTO LV_USRID
+                  WHERE PERNR = LS_PERNR-PERNR
+                  AND ENDDA = '99991231'
+                  AND USRTY = '0001'.
+
+                LS_AGENTS-ZAGENT = LV_USRID.
+                APPEND LS_AGENTS TO LT_AGENTS.
+
+                CLEAR: LV_USRID, LS_PERNR, LS_AGENTS.
+              ENDLOOP.
+            ELSEIF LS_SOBID-SUP_USRID IS NOT INITIAL..
+              LS_AGENTS-ZAGENT = LS_SOBID-SUP_USRID.
+              APPEND LS_AGENTS TO LT_AGENTS.
+
+              CLEAR: LV_USRID, LS_PERNR, LS_AGENTS.
+            ENDIF.
+            CLEAR: LS_SOBID.
+          ENDLOOP.
+        ENDIF.
+
+      ENDIF.
+
+
+
+    ELSEIF LS_SET-WF_DET_KEY = 'RT'.
+
+      SELECT ERNAM AS ZAGENT FROM ZPM_ROT INTO TABLE LT_AGENTS
+           WHERE ( BLOCK = VIQMEL-TPLNR(3) OR ZZONE = VIQMEL-TPLNR+7(3) ) "Firts 3 Chars to scan
+           AND IWERK = VIQMEL-IWERK
+           AND WF_ID = WF_ID
+           AND LEVELS = LS_SET-LEVELS.
+      IF LT_AGENTS IS INITIAL.
+        SELECT ERNAM AS ZAGENT FROM ZPM_ROT INTO TABLE LT_AGENTS
+             WHERE ( BLOCK = VIQMEL-TPLNR(3) OR ZZONE = VIQMEL-TPLNR+7(3) ) "Firts 3 Chars to scan
+             AND WF_ID = WF_ID
+             AND LEVELS = LS_SET-LEVELS.
+      ENDIF.
+
+
+    ELSEIF LS_SET-WF_DET_KEY = 'WD'. "WBS Budget Owner
+      BREAK AC_WF1.
+      DATA WBS_AGENTS     TYPE ZTT_AGENTS.
+      CALL FUNCTION 'ZFM_MM_BUDGET_OWNER'
+        EXPORTING
+          PS_PSP_PNR = VIQMEL-PROID
+          KOSTL      = VIQMEL-KOSTL
+          KOKRS      = VIQMEL-KOKRS
+        TABLES
+          AGENTS     = WBS_AGENTS.
+
+      LT_AGENTS = CORRESPONDING #( WBS_AGENTS MAPPING ZAGENT = AGENT ).
+
+    ENDIF.
+
+    IF LT_AGENTS[] IS INITIAL.
+      RTYPE = 'E'.
+      MESSAGE = |Workflow Approval Hierarchy not maintained for Level { LS_SET-LEVELS }|.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+
+
+ENDFUNCTION.
